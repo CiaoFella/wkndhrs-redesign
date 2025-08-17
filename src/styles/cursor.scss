@@ -1,0 +1,118 @@
+.cb-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 150;
+  contain: layout style size;
+  pointer-events: none;
+  will-change: transform;
+  transition: opacity 0.3s, color 0.4s;
+  color: white;
+  mix-blend-mode: exclusion;
+
+  &:before {
+    content: "";
+    position: absolute;
+    top: -24px;
+    left: -24px;
+    display: block;
+    width: 48px;
+    height: 48px;
+    transform: scale(0);
+    background: currentColor;
+    border-radius: 50%;
+    transition: transform 0.3s ease-in-out, opacity 0.1s;
+  }
+
+  &.-normal, &.-text {
+    color: white;
+
+    .cb-cursor-text{
+      padding: 5px;
+      color: black;
+    }
+  }
+
+  &.-normal:before, .cb-cursor.-text:before {
+    background: currentColor;
+  }
+
+  &.-inverse {
+    color: white;
+  }
+
+  &.-visible:before {
+    transform: scale(0.2);
+  }
+
+  &.-visible.-active:before {
+    transform: scale(0.1);
+    transition-duration: 0.2s;
+  }
+
+  &.-pointer:before {
+    transform: scale(0.4);
+    opacity: 0.75;
+  }
+
+  &.-text:before {
+    opacity: 0.85;
+    transform: scale(1.4);
+  }
+
+  &.-text .cb-cursor-text {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  &.-text.-active:before {
+    transform: scale(1.2);
+    transition-duration: 0.2s;
+  }
+
+  &.-opaque:before {
+    transform: scale(0.8);
+  }
+
+  &.-opaque.-active:before {
+    transform: scale(1);
+  }
+
+  &.-lg:before {
+    transform: scale(1);
+  }
+
+  &.-hidden:before {
+    transform: scale(0);
+  }
+}
+
+.cb-cursor-text {
+  position: absolute;
+  top: -18px;
+  left: -18px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(0) rotate(10deg);
+  opacity: 0;
+  color: white;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: center;
+  letter-spacing: -0.01em;
+  transition: opacity 0.4s, transform 0.3s;
+}
+
+@supports (mix-blend-mode: exclusion) {
+  .cb-cursor.-exclusion, .cb-cursor.-opaque {
+    mix-blend-mode: exclusion;
+  }
+}
+@supports (mix-blend-mode: exclusion) {
+  .cb-cursor.-exclusion:before, .cb-cursor.-opaque:before {
+    background: white;
+  }
+}

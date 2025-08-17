@@ -1,0 +1,60 @@
+<link rel="stylesheet" href="https://netlify.app/style.css"/>
+
+<script>
+function loadMainScript() {
+  const netlifyBaseUrl = 'https://url.netlify.app/';
+  const localhostBaseUrl = 'http://localhost:1235/';
+
+  // URLs for the scripts and stylesheets
+  const mainScriptUrl = `${localhostBaseUrl}main.js`;
+  const fallbackMainScriptUrl = `${netlifyBaseUrl}main.js`;
+  const mainStyleUrl = `${localhostBaseUrl}style.css`;
+  const fallbackMainStyleUrl = `${netlifyBaseUrl}style.css`;
+
+  // Function to check if a URL is reachable
+  function isUrlReachable(url) {
+    return new Promise((resolve) => {
+      fetch(url, { method: 'HEAD' })
+        .then(() => resolve(true))
+        .catch(() => resolve(false));
+    });
+  }
+
+  // Function to create and append the script element
+  function appendScript(url) {
+    const script = document.createElement('script');
+    script.src = url;
+    script.type = 'module';
+    script.async = true;
+    document.body.appendChild(script);
+  }
+
+  // Function to create and append the link element for CSS
+  function appendStyle(url) {
+    const link = document.createElement('link');
+    link.href = url;
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+  }
+
+  // Check if local main script is reachable
+  isUrlReachable(mainScriptUrl)
+    .then((reachable) => {
+      if (reachable) {
+        appendScript(mainScriptUrl);
+        appendStyle(mainStyleUrl);
+      } else {
+        appendScript(fallbackMainScriptUrl);
+        appendStyle(fallbackMainStyleUrl);
+      }
+    })
+    .catch(() => {
+      // If there's an error checking localhost, use Netlify for both scripts and styles
+      appendScript(fallbackMainScriptUrl);
+      appendStyle(fallbackMainStyleUrl);
+    });
+}
+
+// Call the function to load the scripts and styles
+loadMainScript();
+</script>
