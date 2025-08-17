@@ -1,0 +1,27 @@
+.navbar_wrap {
+  transform: translateY(0);
+  transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1),
+    background-color 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), backdrop-filter 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.navbar_wrap.is-hidden {
+  transform: translateY(-100%);
+}
+
+.navbar_wrap {
+  .navbar_contain {
+    transition: padding 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+}
+
+.navbar_wrap.is-scrolled-past {
+  .navbar_contain {
+    padding-top: var(--_spacing---space--1);
+    padding-bottom: var(--_spacing---space--1);
+  }
+
+  * {
+    backdrop-filter: none !important;
+    background-color: transparent !important;
+  }
+}

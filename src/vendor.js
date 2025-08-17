@@ -3,7 +3,7 @@ import ScrollTrigger from 'gsap/ScrollTrigger.js'
 import Flip from 'gsap/Flip.js'
 import MotionPathPlugin from 'gsap/MotionPathPlugin.js'
 import barba from '@barba/core'
-import SplitType from 'split-type'
+import SplitText from 'gsap/SplitText.js'
 import LocomotiveScroll from 'locomotive-scroll'
 
 gsap.defaults({
@@ -13,4 +13,4 @@ gsap.defaults({
 
 gsap.registerPlugin(ScrollTrigger, MotionPathPlugin, Flip)
 
-export { gsap, ScrollTrigger, MotionPathPlugin, barba, SplitType, LocomotiveScroll, Flip }
+export { gsap, ScrollTrigger, MotionPathPlugin, barba, SplitText, LocomotiveScroll, Flip }

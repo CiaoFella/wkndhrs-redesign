@@ -3,7 +3,7 @@ import barba from './barba.js'
 import menu from './animations/general/menu.js'
 import pageLoader from './animations/general/pageLoader.js'
 import { getCurrentPage, handleResponsiveElements, updateCurrentNavLink } from './utilities/helper.js'
-import createSplitTypes from './utilities/createSplitTypes.js'
+import createSplitTexts from './utilities/createSplitTexts.js'
 import lenis from './utilities/smoothScroll.js'
 import handlePageEnterAnimation from './animations/general/handlePageEnter.js'
 import { cursor, magneticCursor } from './utilities/customCursor/customCursor.js'
@@ -64,7 +64,7 @@ function loadPageModule(pageName) {
 
 // Load the initial page module
 const initialPageName = document.querySelector('[data-barba="container"]').dataset.barbaNamespace
-createSplitTypes.init()
+createSplitTexts.init()
 loadPageModule(initialPageName)
 pageLoader.init(initialPageName)
 handleResponsiveElements()
@@ -80,7 +80,7 @@ document.addEventListener('onPageReady', event => {
 })
 
 barba.hooks.beforeEnter(() => {
-  createSplitTypes.cleanup()
+  createSplitTexts.cleanup()
 })
 
 barba.hooks.afterEnter(data => {
@@ -91,7 +91,7 @@ barba.hooks.afterEnter(data => {
 barba.hooks.after(data => {
   const pageName = data.next.namespace
   lenis.scrollTo(0, { duration: 0, immediate: true })
-  createSplitTypes.init()
+  createSplitTexts.init()
   updateCurrentNavLink()
   loadPageModule(pageName)
   handleResponsiveElements()

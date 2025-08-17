@@ -2,41 +2,42 @@
 @import './detail.scss';
 @import './home.scss';
 @import './cursor.scss';
-
+@import './navbar.scss';
 
 .is-animating {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 9999;
-    clip-path: polygon(0% 0%, 100% 0%, 100% 0px, 0% 0px);
-    width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 0px, 0% 0px);
+  width: 100%;
 }
 
-[data-page-loader=section] {
-    display: flex;
+[data-page-loader='section'] {
+  display: flex;
 }
 
 html {
-    height: auto;
+  height: auto;
 }
 
-html.lenis, html.lenis body {
-    height: auto;
+html.lenis,
+html.lenis body {
+  height: auto;
 }
-  
+
 .lenis.lenis-smooth {
-    scroll-behavior: auto !important;
+  scroll-behavior: auto !important;
 }
 
 .lenis.lenis-smooth [data-lenis-prevent] {
-    overscroll-behavior: contain;
+  overscroll-behavior: contain;
 }
 
 .lenis.lenis-stopped {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .lenis.lenis-smooth iframe {
-    pointer-events: none;
+  pointer-events: none;
 }

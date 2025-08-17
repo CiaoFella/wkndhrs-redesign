@@ -1,5 +1,5 @@
 import { topClipPath, fullClipPath, isDesktop, isTablet } from '../../utilities/variables.js'
-import { gsap, ScrollTrigger, SplitType } from '../../vendor.js'
+import { gsap, ScrollTrigger, SplitText } from '../../vendor.js'
 
 let context
 

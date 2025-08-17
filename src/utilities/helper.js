@@ -116,3 +116,144 @@ export function updateCurrentNavLink() {
     }
   })
 }
+
+/**
+ * Creates a throttled scroll handler using requestAnimationFrame
+ * Following MDN best practices for RAF usage
+ * @param {Function} callback - Function to call on scroll
+ * @param {Object} options - Configuration options
+ * @param {boolean} options.passive - Use passive event listener (default: true)
+ * @returns {Object} - Object with start/stop methods and cleanup
+ */
+export function createRAFScrollHandler(callback, options = {}) {
+  const { passive = true } = options
+
+  let rafId = null
+  let isScheduled = false
+  let lastTimestamp = 0
+
+  const handleScroll = timestamp => {
+    // Use timestamp parameter for frame-rate independent calculations
+    const deltaTime = timestamp - lastTimestamp
+    lastTimestamp = timestamp
+
+    // Call the user callback with timestamp and deltaTime
+    callback(timestamp, deltaTime)
+
+    isScheduled = false
+    rafId = null
+  }
+
+  const onScroll = () => {
+    if (!isScheduled) {
+      rafId = requestAnimationFrame(handleScroll)
+      isScheduled = true
+    }
+  }
+
+  const start = () => {
+    window.addEventListener('scroll', onScroll, { passive })
+  }
+
+  const stop = () => {
+    window.removeEventListener('scroll', onScroll)
+    if (rafId) {
+      cancelAnimationFrame(rafId)
+      rafId = null
+      isScheduled = false
+    }
+  }
+
+  return {
+    start,
+    stop,
+    // Expose current state for debugging
+    get isActive() {
+      return rafId !== null
+    },
+    get isScheduled() {
+      return isScheduled
+    },
+  }
+}
+
+/**
+ * Creates a general RAF-based animation loop
+ * @param {Function} callback - Animation callback receiving (timestamp, deltaTime, progress)
+ * @param {Object} options - Animation options
+ * @param {number} options.duration - Animation duration in ms (optional)
+ * @param {boolean} options.autoStart - Start immediately (default: true)
+ * @returns {Object} - Animation controller
+ */
+export function createRAFAnimation(callback, options = {}) {
+  const { duration, autoStart = true } = options
+
+  let rafId = null
+  let startTime = null
+  let isRunning = false
+
+  const animate = timestamp => {
+    if (startTime === null) {
+      startTime = timestamp
+    }
+
+    const elapsed = timestamp - startTime
+    const deltaTime = timestamp - (animate.lastTimestamp || timestamp)
+    animate.lastTimestamp = timestamp
+
+    let progress = duration ? Math.min(elapsed / duration, 1) : elapsed / 1000
+
+    // Call user callback with timestamp, deltaTime, and progress
+    const shouldContinue = callback(timestamp, deltaTime, progress)
+
+    // Continue animation if duration not reached or callback returns true
+    if ((duration && progress < 1) || (!duration && shouldContinue !== false)) {
+      rafId = requestAnimationFrame(animate)
+    } else {
+      stop()
+    }
+  }
+
+  const start = () => {
+    if (!isRunning) {
+      isRunning = true
+      startTime = null
+      animate.lastTimestamp = null
+      rafId = requestAnimationFrame(animate)
+    }
+  }
+
+  const stop = () => {
+    if (rafId) {
+      cancelAnimationFrame(rafId)
+      rafId = null
+      isRunning = false
+      startTime = null
+      animate.lastTimestamp = null
+    }
+  }
+
+  const reset = () => {
+    stop()
+    if (autoStart) {
+      start()
+    }
+  }
+
+  if (autoStart) {
+    start()
+  }
+
+  return {
+    start,
+    stop,
+    reset,
+    get isRunning() {
+      return isRunning
+    },
+    get progress() {
+      if (!startTime || !duration) return 0
+      return Math.min((performance.now() - startTime) / duration, 1)
+    },
+  }
+}

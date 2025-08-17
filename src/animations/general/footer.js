@@ -1,5 +1,5 @@
 import { fullClipPath, topClipPath } from '../../utilities/variables.js'
-import { gsap, ScrollTrigger, SplitType } from '../../vendor.js'
+import { gsap, ScrollTrigger, SplitText } from '../../vendor.js'
 
 let ctx
 
@@ -12,7 +12,7 @@ function init() {
     const elements = section.querySelectorAll('[data-footer=element]')
     const paragraph = section.querySelector('[data-footer=paragraph]')
 
-    const paragraphSplit = new SplitType(paragraph, { types: 'lines' })
+    const paragraphSplit = SplitText.create(paragraph, { types: 'lines' })
 
     ctx = gsap.context(() => {
       const scrubTl = gsap.timeline()

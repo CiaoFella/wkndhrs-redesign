@@ -1,20 +1,22 @@
-import { gsap, ScrollTrigger, SplitType } from '../../vendor.js'
+import { gsap, ScrollTrigger, SplitText } from '../../vendor.js'
 import { fullClipPath, isDesktop, isTablet, topClipPath } from '../../utilities/variables.js'
 import { unwrapSpanAndPreserveClasses } from '../../utilities/helper.js'
 
 gsap.registerPlugin(ScrollTrigger)
 
 let ctx
+let splitTextInstances = []
 
 const mm = gsap.matchMedia()
 
 function init() {
   ctx = gsap.context(() => {
-    const textScrollSections = document.querySelectorAll('[data-scroll-text=section]')
+    const textScrollSections = document.querySelectorAll('[data-anm-scroll-text=section]')
 
     textScrollSections.forEach(section => {
-      const headline = section.querySelectorAll('[data-scroll-text=headline]')
-      const text = section.querySelectorAll('[data-scroll-text=text]')
+      const headline = section.querySelectorAll('[data-anm-scroll-text=headline]')
+      const text = section.querySelectorAll('[data-anm-scroll-text=text]')
+      const richText = section.querySelectorAll('[data-anm-scroll-text=rich]')
 
       const tl = gsap.timeline()
 
@@ -27,88 +29,57 @@ function init() {
       })
 
       if (headline && headline.length > 0) {
-        headline.forEach(item => {
-          unwrapSpanAndPreserveClasses(item)
-          const headlineSplit = new SplitType(item, {
-            types: 'lines',
-          })
-          const headlineDelay = item.dataset.delay || 0
-          const headlineDuration = item.dataset.duration || 1
-
-          let headlineY = 150
-
-          mm.add(isTablet, () => {
-            headlineY = 25
-            tl.fromTo(
-              headlineSplit.lines,
-              { opacity: 0, y: headlineY },
-              {
-                opacity: 1,
-                y: 0,
-                duration: headlineDuration,
-                delay: headlineDelay,
-                stagger: 0.05,
-              },
-              '<+0.1'
-            )
-          })
-
-          mm.add(isDesktop, () => {
-            tl.fromTo(
-              headlineSplit.lines,
-              { clipPath: topClipPath, y: headlineY },
-              {
-                clipPath: fullClipPath,
-                y: 0,
-                duration: headlineDuration,
-                delay: headlineDelay,
-                stagger: 0.05,
-                ease: 'expo.out',
-              },
-              '<+0.1'
-            )
-          })
-        })
       }
 
-      if (text && text.length > 0) {
-        text.forEach(item => {
-          const textDelay = item.dataset.delay || 0
-          const textDuration = item.dataset.duration || 1
+      if (richText && richText.length > 0) {
+        richText.forEach(item => {
+          const richTextDelay = item.dataset.delay || 0
+          const richTextDuration = item.dataset.duration || 2
 
-          const textSplit = new SplitType(item, {
-            types: 'lines',
+          const textTarget = item.querySelector('p') || item
+
+          const originalWhiteSpace = textTarget.style.whiteSpace
+          const originalWidth = textTarget.style.width
+
+          textTarget.style.whiteSpace = 'normal'
+          if (!textTarget.style.width && textTarget.offsetWidth > 0) {
+            textTarget.style.maxWidth = textTarget.offsetWidth + 'px'
+          }
+
+          const richTextSplit = new SplitText(textTarget, {
+            type: 'lines',
+            linesClass: 'line++',
+            deepSlice: true,
+            aria: true,
+            autoSplit: true,
+            reduceWhiteSpace: false,
+            force3D: true,
+            mask: 'lines',
           })
 
+          textTarget.style.whiteSpace = originalWhiteSpace
+          textTarget.style.width = originalWidth
+
+          splitTextInstances.push(richTextSplit)
+
           mm.add(isTablet, () => {
-            tl.fromTo(
-              textSplit.lines,
-              { opacity: 0, y: 50 },
-              {
-                opacity: 1,
-                y: 0,
-                duration: textDuration,
-                delay: textDelay,
-                stagger: 0.05,
-              },
-              0
-            )
+            tl.from(richTextSplit.lines, {
+              yPercent: 100,
+              duration: richTextDuration,
+              delay: richTextDelay,
+              stagger: 0.1,
+              ease: 'expo.out',
+            })
           })
 
           mm.add(isDesktop, () => {
-            tl.fromTo(
-              textSplit.lines,
-              { clipPath: topClipPath, y: 50 },
-              {
-                clipPath: fullClipPath,
-                y: 0,
-                duration: textDuration,
-                delay: textDelay,
-                stagger: 0.05,
-                ease: 'expo.out',
-              },
-              0
-            )
+            tl.from(richTextSplit.lines, {
+              yPercent: 100,
+              duration: richTextDuration,
+              delay: richTextDelay,
+              stagger: 0.2,
+              ease: 'expo.out',
+            })
           })
         })
       }
@@ -117,9 +88,16 @@ function init() {
 }
 
 function cleanup() {
+  splitTextInstances.forEach(split => {
+    split.revert()
+  })
+  splitTextInstances = []
+
   if (ctx) {
     ctx.revert()
   }
+
+  mm.revert()
 }
 
 export default {
