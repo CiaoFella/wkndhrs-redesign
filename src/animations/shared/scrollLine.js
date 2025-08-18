@@ -14,8 +14,8 @@ function init() {
 
       const tl = gsap.timeline({
         defaults: {
-          duration: 1.5,
-          ease: 'power3.inOut',
+          duration: 2,
+          ease: 'expo.out',
         },
       })
 
@@ -37,8 +37,8 @@ function init() {
           return target.classList.contains('is-left') || target.classList.contains('is-right') ? 1 : undefined
         },
         transformOrigin: function (index, target) {
-          if (target.classList.contains('is-top')) return 'left center'
-          if (target.classList.contains('is-bottom')) return 'right center'
+          if (target.classList.contains('is-top')) return 'right center'
+          if (target.classList.contains('is-bottom')) return 'left center'
           if (target.classList.contains('is-left')) return 'bottom center'
           if (target.classList.contains('is-right')) return 'top center'
           return 'center center'
