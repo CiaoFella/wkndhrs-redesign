@@ -1,10 +1,9 @@
-// Button underline animations
-// Works with your existing markup structure
-@use './variables.scss' as *;
+@use './variables.scss';
 
 [data-anm-button-underline='button'] {
   position: relative;
   display: inline-block;
+  width: fit-content;
 
   // First underline (background-subtle) - shows initially, hides on hover
   &::before {
@@ -13,12 +12,13 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 0.0625rem; // 1px in rem
+    height: 0.0625em; // 1px in em
     background-color: var(--_theme---background-subtle);
     transform: scaleX(1);
     transform-origin: left center;
-    transition: transform $duration-button $ease-power2-inOut;
+    transition: transform variables.$duration-button variables.$ease-power2-inOut;
     will-change: transform;
+    background-color: red;
   }
 
   // Second underline (text color) - hidden initially, shows on hover
@@ -28,11 +28,11 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 0.0625rem; // 1px in rem
+    height: 0.0625em; // 1px in em
     background-color: var(--_theme---text);
     transform: scaleX(0);
     transform-origin: left center;
-    transition: transform $duration-button $ease-power2-inOut;
+    transition: transform variables.$duration-button variables.$ease-power2-inOut;
     will-change: transform;
   }
 
@@ -59,7 +59,7 @@
   [data-anm-button-underline='underline'] {
     width: 0;
     transform-origin: left center;
-    transition: width $duration-button $ease-power2-inOut, transform-origin 0.1s ease;
+    transition: width variables.$duration-button variables.$ease-power2-inOut, transform-origin 0.1s ease;
   }
 
   &:hover [data-anm-button-underline='underline'] {
@@ -102,17 +102,17 @@
 [data-anm-button-underline='button'] {
   &.underline--thin::before,
   &.underline--thin::after {
-    height: 0.0625rem; // 1px
+    height: 0.0625em; // 1px
   }
 
   &.underline--medium::before,
   &.underline--medium::after {
-    height: 0.125rem; // 2px
+    height: 0.25em; // 2px
   }
 
   &.underline--thick::before,
   &.underline--thick::after {
-    height: 0.1875rem; // 3px
+    height: 0.375em; // 3px
   }
 }
 
@@ -120,11 +120,11 @@
 [data-anm-button-underline='button'] {
   &.underline--fast::before,
   &.underline--fast::after {
-    transition-duration: calc($duration-button * 0.5); // 0.2s
+    transition-duration: calc(variables.$duration-button * 0.5); // 0.2s
   }
 
   &.underline--slow::before,
   &.underline--slow::after {
-    transition-duration: calc($duration-button * 1.5); // 0.6s
+    transition-duration: calc(variables.$duration-button * 1.5); // 0.6s
   }
 }
