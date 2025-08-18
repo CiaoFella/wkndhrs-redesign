@@ -18,7 +18,6 @@
     transform-origin: left center;
     transition: transform variables.$duration-button variables.$ease-power2-inOut;
     will-change: transform;
-    background-color: red;
   }
 
   // Second underline (text color) - hidden initially, shows on hover
