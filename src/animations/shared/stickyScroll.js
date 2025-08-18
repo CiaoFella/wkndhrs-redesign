@@ -36,7 +36,7 @@ function init() {
           {
             ease: 'power1.out',
             startAt: { filter: 'brightness(100%)', blur: '0px' },
-            rotateZ: 5,
+            rotateZ: -5,
             yPercent: 2.5,
             filter: 'brightness(80%) blur(10px)',
             scale: 0.8,
