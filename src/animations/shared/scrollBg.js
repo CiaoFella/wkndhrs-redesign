@@ -35,8 +35,8 @@ function init() {
       ctx = gsap.context(() => {
         ScrollTrigger.create({
           trigger: element,
-          start: 'top 25%',
-          end: 'bottom 25%',
+          start: 'top center',
+          end: 'bottom center',
           onToggle: ({ isActive }) => {
             if (isActive) {
               gsap.to('body', {
@@ -46,7 +46,6 @@ function init() {
               })
             }
           },
-          markers: true,
         })
       })
     })
