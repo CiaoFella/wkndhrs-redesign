@@ -7,3 +7,10 @@ $topClipPath: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
 $bottomClipPath: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
 $centerHorizontalPath: polygon(0 50%, 100% 50%, 100% 50%, 0 50%);
 $fullclipPath: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+
+// Animation Variables
+// GSAP power2.inOut equivalent: cubic-bezier(0.76, 0, 0.24, 1)
+$ease-power2-inOut: cubic-bezier(0.76, 0, 0.24, 1);
+
+// Animation Durations
+$duration-button: 0.4s;

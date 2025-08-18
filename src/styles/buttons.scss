@@ -1,0 +1,130 @@
+// Button underline animations
+// Works with your existing markup structure
+@use './variables.scss' as *;
+
+[data-anm-button-underline='button'] {
+  position: relative;
+  display: inline-block;
+
+  // First underline (background-subtle) - shows initially, hides on hover
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0.0625rem; // 1px in rem
+    background-color: var(--_theme---background-subtle);
+    transform: scaleX(1);
+    transform-origin: left center;
+    transition: transform $duration-button $ease-power2-inOut;
+    will-change: transform;
+  }
+
+  // Second underline (text color) - hidden initially, shows on hover
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0.0625rem; // 1px in rem
+    background-color: var(--_theme---text);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform $duration-button $ease-power2-inOut;
+    will-change: transform;
+  }
+
+  // Hover in - hide first underline, show second underline
+  &:hover::before {
+    transform: scaleX(0);
+    transform-origin: right center;
+  }
+
+  &:hover::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+
+  // Hover out - collapse second underline to the right
+  &:not(:hover)::after {
+    transform: scaleX(0);
+    transform-origin: right center;
+  }
+}
+
+// Alternative version - hover out collapses to the right (legacy - use main version above)
+[data-anm-button-underline='button'].is--collapse-right {
+  [data-anm-button-underline='underline'] {
+    width: 0;
+    transform-origin: left center;
+    transition: width $duration-button $ease-power2-inOut, transform-origin 0.1s ease;
+  }
+
+  &:hover [data-anm-button-underline='underline'] {
+    width: 100%;
+    transform-origin: left center;
+  }
+
+  // On hover out, change origin to right for collapse effect
+  &:not(:hover) [data-anm-button-underline='underline'] {
+    transform-origin: right center;
+    transition-delay: 0.1s;
+  }
+}
+
+// Custom color variants
+[data-anm-button-underline='button'] {
+  &.underline--white::before {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+  &.underline--white::after {
+    background-color: white;
+  }
+
+  &.underline--black::before {
+    background-color: rgba(19, 19, 19, 0.3);
+  }
+  &.underline--black::after {
+    background-color: #131313;
+  }
+
+  &.underline--accent::before {
+    background-color: rgba(0, 123, 255, 0.3);
+  }
+  &.underline--accent::after {
+    background-color: var(--accent-color, #007bff);
+  }
+}
+
+// Thickness variants
+[data-anm-button-underline='button'] {
+  &.underline--thin::before,
+  &.underline--thin::after {
+    height: 0.0625rem; // 1px
+  }
+
+  &.underline--medium::before,
+  &.underline--medium::after {
+    height: 0.125rem; // 2px
+  }
+
+  &.underline--thick::before,
+  &.underline--thick::after {
+    height: 0.1875rem; // 3px
+  }
+}
+
+// Speed variants
+[data-anm-button-underline='button'] {
+  &.underline--fast::before,
+  &.underline--fast::after {
+    transition-duration: calc($duration-button * 0.5); // 0.2s
+  }
+
+  &.underline--slow::before,
+  &.underline--slow::after {
+    transition-duration: calc($duration-button * 1.5); // 0.6s
+  }
+}
