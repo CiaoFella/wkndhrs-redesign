@@ -5,6 +5,7 @@ import scrollText from './shared/scrollText.js'
 import scrollLine from './shared/scrollLine.js'
 import scrollBg from './shared/scrollBg.js'
 import stickyScroll from './shared/stickyScroll.js'
+import rollerNumber from './shared/rollerNumber.js'
 
 function init() {
   hero.init()
@@ -13,6 +14,7 @@ function init() {
   scrollLine.init()
   scrollBg.init()
   stickyScroll.init()
+  rollerNumber.init()
   footer.init()
 }
 
@@ -23,6 +25,7 @@ function cleanup() {
   scrollLine.cleanup()
   scrollBg.cleanup()
   stickyScroll.cleanup()
+  rollerNumber.cleanup()
   footer.cleanup()
 }
 
