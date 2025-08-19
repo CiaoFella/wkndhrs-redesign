@@ -18,6 +18,7 @@
     transform-origin: left center;
     transition: transform variables.$duration-button variables.$ease-power2-inOut;
     will-change: transform;
+    margin-bottom: calc(-0.5lh + 0.3em);
   }
 
   // Second underline (text color) - hidden initially, shows on hover
@@ -33,6 +34,7 @@
     transform-origin: left center;
     transition: transform variables.$duration-button variables.$ease-power2-inOut;
     will-change: transform;
+    margin-bottom: calc(-0.5lh + 0.3em);
   }
 
   // Hover in - hide first underline, show second underline
