@@ -4,6 +4,7 @@
   position: relative;
   display: inline-block;
   width: fit-content;
+  line-height: 1.33;
 
   // First underline (background-subtle) - shows initially, hides on hover
   &::before {
@@ -18,7 +19,7 @@
     transform-origin: left center;
     transition: transform variables.$duration-button variables.$ease-power2-inOut;
     will-change: transform;
-    margin-bottom: calc(-0.5lh + 0.3em);
+    margin-bottom: 0 !important;
   }
 
   // Second underline (text color) - hidden initially, shows on hover
@@ -34,7 +35,7 @@
     transform-origin: left center;
     transition: transform variables.$duration-button variables.$ease-power2-inOut;
     will-change: transform;
-    margin-bottom: calc(-0.5lh + 0.3em);
+    margin-bottom: 0 !important;
   }
 
   // Hover in - hide first underline, show second underline
