@@ -73,8 +73,9 @@ function initScrollLines() {
 }
 
 function initLogoCycle() {
-  const loopDelay = 1.5 // Loop Duration
-  const duration = 1 // Animation Duration
+  const cycleDuration = 6 // Cycle all logos every 4 seconds
+  const animDuration = 0.8 // Individual logo animation duration
+  const animEase = 'power3.inOut'
 
   document.querySelectorAll('[data-anm-logo-grid="section"]').forEach(root => {
     const list = root.querySelector('[data-anm-logo-grid="list"]')
@@ -88,8 +89,6 @@ function initLogoCycle() {
     let visibleItems = []
     let visibleCount = 0
     let pool = []
-    let pattern = []
-    let patternIndex = 0
     let tl
 
     function isVisible(el) {
@@ -113,9 +112,6 @@ function initLogoCycle() {
       visibleItems = items.filter(isVisible)
       visibleCount = visibleItems.length
 
-      pattern = shuffleArray(Array.from({ length: visibleCount }, (_, i) => i))
-      patternIndex = 0
-
       // Remove all injected targets from grid items
       items.forEach(item => {
         const target = item.querySelector('[data-anm-logo-grid="target"]')
@@ -137,6 +133,7 @@ function initLogoCycle() {
       }
       pool = front.concat(rest)
 
+      // Place initial logos
       for (let i = 0; i < visibleCount; i++) {
         const parent = visibleItems[i].querySelector('[data-anm-logo-grid="target-parent"]') || visibleItems[i]
         const target = parent.querySelector('[data-anm-logo-grid="target"]')
@@ -148,63 +145,82 @@ function initLogoCycle() {
         }
       }
 
-      tl = gsap.timeline({ repeat: -1, repeatDelay: loopDelay })
-      tl.call(swapNext)
+      // Create staggered cycling timeline
+      tl = gsap.timeline({ repeat: -1, repeatDelay: cycleDuration })
+      tl.call(cycleAllLogos)
       tl.play()
     }
 
-    function swapNext() {
-      const nowCount = items.filter(isVisible).length
-      if (nowCount !== visibleCount) {
-        setup()
-        return
+    function cycleAllLogos() {
+      // Replenish pool if needed before cycling
+      if (pool.length < visibleCount) {
+        const availableLogos = originalTargets.map(n => n.cloneNode(true))
+        const shuffledAvailable = shuffleFront ? shuffleArray(availableLogos) : availableLogos
+        pool.push(...shuffledAvailable)
       }
+
       if (!pool.length) return
 
-      const idx = pattern[patternIndex % visibleCount]
-      patternIndex++
+      // Create a timeline for all logo transitions with stagger
+      const cycleTl = gsap.timeline()
 
-      const container = visibleItems[idx]
-      const parent =
-        container.querySelector('[data-anm-logo-grid="target-parent"]') ||
-        container.querySelector('*:has(> [data-anm-logo-grid="target"])') ||
-        container
-      const targetContainer = parent.querySelector('[data-anm-logo-grid="target"]')
-      const before = parent.querySelector('[data-anm-logo-grid="before"]')
+      visibleItems.forEach((item, index) => {
+        const parent = item.querySelector('[data-anm-logo-grid="target-parent"]') || item
+        const targetContainer = parent.querySelector('[data-anm-logo-grid="target"]')
+        const before = parent.querySelector('[data-anm-logo-grid="before"]')
 
-      // Ensure both before and target elements are present
-      if (!targetContainer || !before) return
+        if (!targetContainer || !before) return
 
-      const existing = targetContainer.children
-      if (existing.length > 1) return
+        const current = targetContainer.children[0]
 
-      const current = targetContainer.children[0]
-      const incoming = pool.shift()
+        // Ensure we have enough logos in pool
+        if (!pool.length) {
+          const moreLogos = originalTargets.map(n => n.cloneNode(true))
+          const shuffledMore = shuffleFront ? shuffleArray(moreLogos) : moreLogos
+          pool.push(...shuffledMore)
+        }
 
-      if (!incoming) return
+        const incoming = pool.shift()
+        if (!incoming) return
 
-      gsap.set(incoming, { yPercent: 50, autoAlpha: 0 })
-      targetContainer.appendChild(incoming)
+        // Calculate stagger delay (same pattern as scroll lines)
+        const staggerDelay = index * 0.025 // Same 0.15 stagger as scroll lines
 
-      if (current) {
-        gsap.to(current, {
-          yPercent: -50,
-          autoAlpha: 0,
-          duration,
-          ease: 'expo.inOut',
-          onComplete: () => {
-            current.remove()
-            pool.push(current)
+        // Set initial state for incoming logo
+        gsap.set(incoming, { yPercent: 50, autoAlpha: 0 })
+        targetContainer.appendChild(incoming)
+
+        // Add animations to the cycle timeline with stagger
+        if (current) {
+          cycleTl.to(
+            current,
+            {
+              yPercent: -50,
+              autoAlpha: 0,
+              filter: 'blur(5px)',
+              duration: animDuration,
+              ease: 'animEase',
+              onComplete: () => {
+                current.remove()
+                pool.push(current)
+              },
+            },
+            staggerDelay
+          )
+        }
+
+        cycleTl.to(
+          incoming,
+          {
+            yPercent: 0,
+            autoAlpha: 1,
+            filter: 'blur(0px)',
+            duration: animDuration,
+            delay: 0.2,
+            ease: animEase,
           },
-        })
-      }
-
-      gsap.to(incoming, {
-        yPercent: 0,
-        autoAlpha: 1,
-        duration,
-        delay: 0.1,
-        ease: 'expo.inOut',
+          staggerDelay
+        )
       })
     }
 
