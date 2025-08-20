@@ -11,6 +11,7 @@ $fullclipPath: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
 // Animation Variables
 // GSAP power2.inOut equivalent: cubic-bezier(0.76, 0, 0.24, 1)
 $ease-power2-inOut: cubic-bezier(0.76, 0, 0.24, 1);
+$ease-power2-out: cubic-bezier(0.33, 1, 0.68, 1);
 
 // Animation Durations
 $duration-button: 0.4s;

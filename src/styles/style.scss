@@ -4,6 +4,7 @@
 @import './cursor.scss';
 @import './navbar.scss';
 @import './buttons.scss';
+@import './variables.scss';
 
 .is-animating {
   position: fixed;
@@ -41,4 +42,10 @@ html.lenis body {
 
 .lenis.lenis-smooth iframe {
   pointer-events: none;
+}
+
+[data-anm-flip-link='list'] {
+  * {
+    transition: color 0.3s $ease-power2-out;
+  }
 }
