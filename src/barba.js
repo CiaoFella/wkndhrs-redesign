@@ -17,7 +17,8 @@ barba.hooks.after(data => {
 })
 
 barba.init({
-  preventRunning: false,
+  preventRunning: true,
+  debug: false,
   transitions: [
     {
       name: 'default-transition',
@@ -26,6 +27,7 @@ barba.init({
         const done = this.async()
         proxy.pageReady = false
         closeMenu()
+        done()
       },
       after(data) {
         mm.add(isDesktop, () => {

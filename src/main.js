@@ -8,6 +8,7 @@ import lenis from './utilities/smoothScroll.js'
 import handlePageEnterAnimation from './animations/general/handlePageEnter.js'
 import { cursor, magneticCursor } from './utilities/customCursor/customCursor.js'
 import { isDesktop } from './utilities/variables.js'
+import flipLink from './animations/shared/flipLink.js'
 
 gsap.registerPlugin(ScrollTrigger)
 menu.init()
@@ -21,9 +22,23 @@ function resetWebflow(data) {
   let dom = parser.parseFromString(data.next.html, 'text/html')
   let webflowPageId = $(dom).find('html').attr('data-wf-page')
   $('html').attr('data-wf-page', webflowPageId)
-  window.Webflow && window.Webflow.destroy()
-  window.Webflow && window.Webflow.ready()
-  window.Webflow && window.Webflow.require('ix2').init()
+
+  if (window.Webflow) {
+    // Destroy existing Webflow instance
+    if (typeof window.Webflow.destroy === 'function') {
+      window.Webflow.destroy()
+    }
+
+    // Reinitialize Webflow
+    if (typeof window.Webflow.ready === 'function') {
+      window.Webflow.ready()
+    }
+
+    // Load/initialize Webflow for the new page
+    if (typeof window.Webflow.load === 'function') {
+      window.Webflow.load()
+    }
+  }
 }
 
 function cleanupCurrentModule() {
@@ -65,6 +80,7 @@ function loadPageModule(pageName) {
 // Load the initial page module
 const initialPageName = document.querySelector('[data-barba="container"]').dataset.barbaNamespace
 createSplitTexts.init()
+flipLink.init() // Initialize flip links (including persistent navigation)
 loadPageModule(initialPageName)
 pageLoader.init(initialPageName)
 handleResponsiveElements()
@@ -93,6 +109,8 @@ barba.hooks.after(data => {
   lenis.scrollTo(0, { duration: 0, immediate: true })
   createSplitTexts.init()
   updateCurrentNavLink()
+  flipLink.updatePersistentNavigation() // Update persistent navigation state
+  flipLink.init() // Reinitialize page-specific flip links
   loadPageModule(pageName)
   handleResponsiveElements()
 })

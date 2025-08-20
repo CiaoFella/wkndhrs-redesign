@@ -6,7 +6,6 @@ import logoGrid from './shared/logoGrid.js'
 import scrollBg from './shared/scrollBg.js'
 import stickyScroll from './shared/stickyScroll.js'
 import rollerNumber from './shared/rollerNumber.js'
-import flipLink from './shared/flipLink.js'
 
 function init() {
   hero.init()
@@ -16,7 +15,6 @@ function init() {
   scrollBg.init()
   stickyScroll.init()
   rollerNumber.init()
-  flipLink.init()
   footer.init()
 }
 
@@ -28,7 +26,6 @@ function cleanup() {
   scrollBg.cleanup()
   stickyScroll.cleanup()
   rollerNumber.cleanup()
-  flipLink.cleanup()
   footer.cleanup()
 }
 

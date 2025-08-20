@@ -49,6 +49,8 @@ export function unwrapSpanAndPreserveClasses(element) {
 export function closeMenu() {
   const menuTrigger = document.querySelector('[data-menu-mobile=trigger]')
 
+  if (!menuTrigger) return
+
   if (menuTrigger.classList.contains('is-active')) {
     menuTrigger.click()
   }

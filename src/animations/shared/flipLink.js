@@ -2,6 +2,7 @@ import { gsap, Flip, ScrollTrigger } from '../../vendor.js'
 
 let ctx
 let cleanupFunctions = []
+let persistentNavInstances = new Map() // Store persistent navigation instances
 
 // Function to set up scroll-based active state detection for services nav
 function setupScrollActiveDetection(wrap, links, onActiveLinkChange) {
@@ -69,11 +70,19 @@ function init() {
     return
   }
 
-  // Reset cleanup functions array
+  // Reset cleanup functions array for page-specific instances only
   cleanupFunctions = []
 
   ctx = gsap.context(() => {
     flipWraps.forEach(wrap => {
+      // Check if this is a persistent navigation (outside barba container)
+      const barbaContainer = document.querySelector('[data-barba="container"]')
+      const isPersistent = !barbaContainer || !barbaContainer.contains(wrap)
+
+      // If persistent and already initialized, skip
+      if (isPersistent && persistentNavInstances.has(wrap)) {
+        return
+      }
       // Determine navigation type and get appropriate links
       const isServicesNav = wrap.classList.contains('services_list_nav')
       const links = isServicesNav
@@ -238,15 +247,28 @@ function init() {
       window.addEventListener('resize', handleResize)
 
       // Store cleanup function
-      cleanupFunctions.push(() => {
-        window.removeEventListener('resize', handleResize)
-      })
+      if (isPersistent) {
+        // Store persistent instance data
+        persistentNavInstances.set(wrap, {
+          links,
+          bg,
+          activeLink,
+          isServicesNav,
+          cleanupFn: () => {
+            window.removeEventListener('resize', handleResize)
+          },
+        })
+      } else {
+        cleanupFunctions.push(() => {
+          window.removeEventListener('resize', handleResize)
+        })
+      }
     })
   })
 }
 
 function cleanup() {
-  // Run all stored cleanup functions
+  // Run all stored cleanup functions (page-specific only)
   cleanupFunctions.forEach(fn => fn())
   cleanupFunctions = []
 
@@ -254,7 +276,65 @@ function cleanup() {
   ctx && ctx.revert()
 }
 
+// Update active states for persistent navigation (called on page change)
+function updatePersistentNavigation() {
+  persistentNavInstances.forEach((instance, wrap) => {
+    const { links, isServicesNav } = instance
+
+    if (!isServicesNav) {
+      // Update navbar active state based on current page
+      const currentPath = window.location.pathname
+      const newActiveLink = Array.from(links).find(link => {
+        const linkPath = new URL(link.href, window.location.origin).pathname
+        return linkPath === currentPath
+      })
+
+      if (newActiveLink) {
+        // Remove active from all links
+        links.forEach(link => link.classList.remove('is-active'))
+        // Add active to current page link
+        newActiveLink.classList.add('is-active')
+
+        // Update stored active link reference
+        instance.activeLink = newActiveLink
+
+        // Animate background to new position
+        const { bg } = instance
+        const linkRect = newActiveLink.getBoundingClientRect()
+        const listRect = wrap.querySelector('[data-anm-flip-link="list"]').getBoundingClientRect()
+
+        const state = Flip.getState(bg)
+        gsap.set(bg, {
+          width: linkRect.width,
+          height: linkRect.height,
+          x: linkRect.left - listRect.left,
+          y: linkRect.top - listRect.top,
+        })
+
+        Flip.from(state, {
+          duration: 0.5,
+          ease: 'power2.inOut',
+        })
+      }
+    }
+  })
+}
+
+// Complete cleanup (including persistent navigation)
+function fullCleanup() {
+  // Cleanup page-specific instances
+  cleanup()
+
+  // Cleanup persistent instances
+  persistentNavInstances.forEach(instance => {
+    instance.cleanupFn()
+  })
+  persistentNavInstances.clear()
+}
+
 export default {
   init,
   cleanup,
+  updatePersistentNavigation,
+  fullCleanup,
 }
