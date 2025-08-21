@@ -83,7 +83,7 @@ barba.init({
           currentContainer,
           {
             ease: 'power2.inOut',
-            y: '-25dvh',
+            yPercent: -12.5,
             scale: 1.25,
             rotateZ: -5,
             transformOrigin: 'top right',

@@ -47,14 +47,13 @@ function init() {
           }
 
           const richTextSplit = new SplitText(textTarget, {
-            type: 'lines',
+            type: 'words',
             linesClass: 'line++',
             deepSlice: true,
             aria: true,
             autoSplit: true,
             reduceWhiteSpace: false,
             force3D: true,
-            mask: 'lines',
           })
 
           textTarget.style.whiteSpace = originalWhiteSpace
@@ -63,22 +62,29 @@ function init() {
           splitTextInstances.push(richTextSplit)
 
           mm.add(isTablet, () => {
-            tl.from(richTextSplit.lines, {
-              yPercent: 100,
+            tl.from(richTextSplit.words, {
+              yPercent: 75,
               duration: richTextDuration,
               delay: richTextDelay,
-              stagger: 0.1,
-              ease: 'expo.out',
+              stagger: {
+                amount: 1,
+              },
+              ease: 'power3.out',
+              opacity: 0,
             })
           })
 
           mm.add(isDesktop, () => {
-            tl.from(richTextSplit.lines, {
-              yPercent: 100,
+            tl.from(richTextSplit.words, {
+              yPercent: 75,
               duration: richTextDuration,
               delay: richTextDelay,
-              stagger: 0.2,
-              ease: 'expo.out',
+              stagger: {
+                amount: 1,
+              },
+              ease: 'power4.out',
+              filter: 'blur(5px)',
+              opacity: 0,
             })
           })
         })
