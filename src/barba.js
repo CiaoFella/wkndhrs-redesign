@@ -27,7 +27,92 @@ barba.init({
         const done = this.async()
         proxy.pageReady = false
         closeMenu()
-        done()
+
+        const currentContainer = data.current.container
+        const nextContainer = data.next.container
+        const transitionOverlay = document.querySelector('[data-anm-page-transition="overlay"]')
+
+        gsap.set(transitionOverlay, {
+          autoAlpha: 0,
+          display: 'flex',
+        })
+
+        gsap.set([currentContainer, nextContainer], {
+          clipPath: 'inset(0% 0% 0% 0%)',
+        })
+
+        // Animation sequence using GSAP (adapted from slideshow)
+        const tl = gsap.timeline({
+          defaults: {
+            duration: 1,
+          },
+          onComplete: () => {
+            gsap.set(transitionOverlay, {
+              display: 'none',
+            })
+            gsap.set([currentContainer, nextContainer], {
+              clipPath: 'unset',
+            })
+            done()
+          },
+        })
+
+        // Phase 1: Current page exits, overlay appears
+        tl.addLabel('start', 0)
+          .to(
+            currentContainer,
+            {
+              ease: 'power2.inOut',
+              y: '-10dvh',
+              startAt: {
+                clipPath: 'inset(0% 0% 0% 0%)',
+              },
+              clipPath: 'inset(0% 2.5% 100% 2.5%)',
+              scale: 1,
+            },
+            0
+          )
+          .to(
+            currentContainer.firstElementChild,
+            {
+              scale: 1.05,
+              ease: 'power2.in',
+            },
+            0
+          )
+          .to(
+            transitionOverlay,
+            {
+              autoAlpha: 1,
+              ease: 'power2.out',
+            },
+            '<'
+          )
+          .fromTo(
+            nextContainer,
+            {
+              y: '100dvh',
+              clipPath: 'inset(100% 0% 0% 0%)',
+            },
+            {
+              ease: 'power4.out',
+              y: '0dvh',
+              clipPath: 'inset(0% 0% 0% 0%)',
+              duration: 1.5,
+            },
+            '<'
+          )
+          .fromTo(
+            nextContainer.firstElementChild,
+            {
+              scale: 1.2,
+            },
+            {
+              scale: 1,
+              ease: 'power4.out',
+            },
+            '<'
+          )
       },
       after(data) {
         mm.add(isDesktop, () => {
