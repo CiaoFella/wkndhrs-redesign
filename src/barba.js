@@ -1,6 +1,7 @@
 import { cursor, magneticCursor } from './utilities/customCursor/customCursor.js'
 import { closeMenu } from './utilities/helper.js'
 import { proxy } from './utilities/pageReadyListener.js'
+import { getSmoothScroll } from './utilities/smoothScroll.js'
 import { isDesktop } from './utilities/variables.js'
 import { gsap, barba, ScrollTrigger } from './vendor.js'
 
@@ -32,12 +33,30 @@ barba.init({
         const nextContainer = data.next.container
         const transitionOverlay = document.querySelector('[data-anm-page-transition="overlay"]')
 
+        // Calculate current scroll position and viewport dimensions
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+        const viewportHeight = window.innerHeight
+        const containerHeight = currentContainer.scrollHeight
+
+        // Calculate clip-path to show only what's visible in viewport
+        const topClip = (scrollTop / containerHeight) * 100
+        const bottomClip = ((containerHeight - scrollTop - viewportHeight) / containerHeight) * 100
+
+        // Ensure values are within bounds
+        const topClipSafe = Math.max(0, Math.min(100, topClip))
+        const bottomClipSafe = Math.max(0, Math.min(100, bottomClip))
+
         gsap.set(transitionOverlay, {
           autoAlpha: 0,
           display: 'flex',
         })
 
-        gsap.set([currentContainer, nextContainer], {
+        // Set currentContainer to show only the viewport area
+        gsap.set(currentContainer, {
+          clipPath: `inset(${topClipSafe}% 0% ${bottomClipSafe}% 0%)`,
+        })
+
+        gsap.set(nextContainer, {
           clipPath: 'inset(0% 0% 0% 0%)',
         })
 
@@ -54,38 +73,29 @@ barba.init({
               clipPath: 'unset',
             })
             done()
+            getSmoothScroll().start()
           },
         })
+
+        getSmoothScroll().stop()
 
         tl.to(
           currentContainer,
           {
             ease: 'power2.inOut',
-            y: '-50dvh',
-            startAt: {
-              clipPath: 'inset(0% 0% 0% 0%)',
-            },
-            clipPath: 'inset(0% 0% 100% 0%)',
-            scale: 1,
+            y: '-25dvh',
+            scale: 1.25,
+            rotateZ: -5,
+            transformOrigin: 'top right',
           },
           0
         )
-          .to(
-            currentContainer.firstElementChild,
-            {
-              scale: 1.5,
-              rotateZ: -5,
-              ease: 'power2.inOut',
-              duration: 1,
-              transformOrigin: 'top right',
-            },
-            0
-          )
           .to(
             transitionOverlay,
             {
               autoAlpha: 1,
               ease: 'power4.out',
+              duration: 1,
             },
             '<'
           )
@@ -101,18 +111,7 @@ barba.init({
               clipPath: 'inset(0% 0% 0% 0%)',
               duration: 1.5,
             },
-            '<'
-          )
-          .fromTo(
-            nextContainer.firstElementChild,
-            {
-              scale: 1.2,
-            },
-            {
-              scale: 1,
-              ease: 'power4.out',
-            },
-            '<'
+            '<-0.1'
           )
       },
       after(data) {
