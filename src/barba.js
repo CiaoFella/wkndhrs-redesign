@@ -57,25 +57,23 @@ barba.init({
           },
         })
 
-        // Phase 1: Current page exits, overlay appears
-        tl.addLabel('start', 0)
-          .to(
-            currentContainer,
-            {
-              ease: 'power2.inOut',
-              y: '5dvh',
-              startAt: {
-                clipPath: 'inset(0% 0% 0% 0%)',
-              },
-              clipPath: 'inset(0% 2.5% 100% 2.5%)',
-              scale: 1,
+        tl.to(
+          currentContainer,
+          {
+            ease: 'power2.inOut',
+            y: '-50dvh',
+            startAt: {
+              clipPath: 'inset(0% 0% 0% 0%)',
             },
-            0
-          )
+            clipPath: 'inset(0% 0% 100% 0%)',
+            scale: 1,
+          },
+          0
+        )
           .to(
             currentContainer.firstElementChild,
             {
-              scale: 1.2,
+              scale: 1.5,
               rotateZ: -5,
               ease: 'power2.inOut',
               duration: 1,
