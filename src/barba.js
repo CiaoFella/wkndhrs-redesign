@@ -63,7 +63,7 @@ barba.init({
             currentContainer,
             {
               ease: 'power2.inOut',
-              y: '-10dvh',
+              y: '5dvh',
               startAt: {
                 clipPath: 'inset(0% 0% 0% 0%)',
               },
@@ -75,8 +75,11 @@ barba.init({
           .to(
             currentContainer.firstElementChild,
             {
-              scale: 1.05,
-              ease: 'power2.in',
+              scale: 1.2,
+              rotateZ: -5,
+              ease: 'power2.inOut',
+              duration: 1,
+              transformOrigin: 'top right',
             },
             0
           )
@@ -84,7 +87,7 @@ barba.init({
             transitionOverlay,
             {
               autoAlpha: 1,
-              ease: 'power2.out',
+              ease: 'power4.out',
             },
             '<'
           )
