@@ -32,7 +32,7 @@ function setupScrollActiveDetection(wrap, links, onActiveLinkChange) {
         })
 
         Flip.from(state, {
-          duration: 0.5,
+          duration: 0.25,
           ease: 'power2.inOut',
         })
       }
@@ -44,23 +44,42 @@ function setupScrollActiveDetection(wrap, links, onActiveLinkChange) {
     }
   }
 
-  links.forEach(link => {
-    const href = link.getAttribute('href')
-    if (href && href.startsWith('#')) {
-      const targetId = href.substring(1)
-      const targetSection = document.getElementById(targetId)
+  // Add a small delay to ensure other ScrollTriggers are set up first
+  requestAnimationFrame(() => {
+    links.forEach(link => {
+      const href = link.getAttribute('href')
 
-      if (targetSection) {
-        ScrollTrigger.create({
-          trigger: targetSection,
-          start: 'top center',
-          end: 'bottom center',
-          onEnter: () => updateActiveLink(link),
-          onEnterBack: () => updateActiveLink(link),
-        })
+      if (href && href.startsWith('#')) {
+        const targetId = href.substring(1)
+        let targetSection = document.getElementById(targetId)
+
+        // If not found by ID, try looking for service list items
+        if (!targetSection) {
+          const serviceItems = document.querySelectorAll('[data-anm-service-list="item"]')
+
+          serviceItems.forEach(item => {
+            const itemTitle = item.querySelector('[data-anm-service-list="item-title"]')
+            if (itemTitle && itemTitle.textContent.toLowerCase().includes(targetId.toLowerCase())) {
+              targetSection = item
+            }
+          })
+        }
+
+        if (targetSection) {
+          ScrollTrigger.create({
+            trigger: targetSection,
+            start: 'top 50%',
+            end: 'bottom 50%',
+            onEnter: () => updateActiveLink(link),
+            onEnterBack: () => updateActiveLink(link),
+            // Remove markers and add proper invalidation
+            invalidateOnRefresh: true,
+            refreshPriority: -1,
+          })
+        }
       }
-    }
-  })
+    })
+  }, 0)
 }
 
 function init() {
@@ -312,7 +331,7 @@ function updatePersistentNavigation() {
         })
 
         Flip.from(state, {
-          duration: 0.5,
+          duration: 0.25,
           ease: 'power2.inOut',
         })
       }
