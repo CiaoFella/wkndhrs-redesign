@@ -103,20 +103,23 @@ function init() {
         return
       }
       // Determine navigation type and get appropriate links
-      const isServicesNav = wrap.classList.contains('services_list_nav')
-      const links = isServicesNav
-        ? wrap.querySelectorAll('[data-anm-flip-link="list"] .services_list_nav_link')
-        : wrap.querySelectorAll('[data-anm-flip-link="list"] .navbar_menu_link')
+      const isSectionsNav = wrap.getAttribute('data-anm-type') === 'sections'
+      console.log(isSectionsNav)
+      const links = isSectionsNav
+        ? wrap.querySelectorAll('[data-anm-flip-link="list"] a')
+        : wrap.querySelectorAll('[data-anm-flip-link="list"] a')
       const bg = wrap.querySelector('[data-anm-flip-link="bg"]')
 
       if (!bg || links.length === 0) {
         return
       }
 
+      console.log(links)
+
       // Find initially active link based on navigation type
       let activeLink
 
-      if (isServicesNav) {
+      if (isSectionsNav) {
         // For services nav, look for w--current class or first link
         activeLink =
           wrap.querySelector('.services_list_nav_link.w--current') ||
@@ -196,13 +199,13 @@ function init() {
       links.forEach(link => {
         link.addEventListener('mouseenter', () => {
           // Get the current active link (may have changed due to scroll)
-          const currentActiveLink = isServicesNav
+          const currentActiveLink = isSectionsNav
             ? wrap.querySelector('.services_list_nav_link.is-active')
             : wrap.querySelector('.navbar_menu_link.is-active')
 
           if (link !== currentActiveLink) {
             // Remove active classes from current active link
-            if (isServicesNav) {
+            if (isSectionsNav) {
               if (currentActiveLink) {
                 currentActiveLink.classList.remove('is-active', 'w--current')
               }
@@ -219,13 +222,13 @@ function init() {
 
         link.addEventListener('mouseleave', () => {
           // Get the current active link (may have changed due to scroll)
-          const currentActiveLink = isServicesNav
+          const currentActiveLink = isSectionsNav
             ? wrap.querySelector('.services_list_nav_link.is-active')
             : wrap.querySelector('.navbar_menu_link.is-active')
 
           if (link === currentActiveLink && link !== activeLink) {
             // Remove active classes from hovered link
-            if (isServicesNav) {
+            if (isSectionsNav) {
               link.classList.remove('is-active', 'w--current')
               activeLink.classList.add('is-active', 'w--current')
             } else {
@@ -237,7 +240,7 @@ function init() {
         })
 
         // Handle click to set new active state (only for navbar, not services nav)
-        if (!isServicesNav) {
+        if (!isSectionsNav) {
           link.addEventListener('click', e => {
             // Remove is-active from all links
             links.forEach(l => l.classList.remove('is-active'))
@@ -272,7 +275,7 @@ function init() {
           links,
           bg,
           activeLink,
-          isServicesNav,
+          isSectionsNav,
           cleanupFn: () => {
             window.removeEventListener('resize', handleResize)
           },
@@ -298,9 +301,9 @@ function cleanup() {
 // Update active states for persistent navigation (called on page change)
 function updatePersistentNavigation() {
   persistentNavInstances.forEach((instance, wrap) => {
-    const { links, isServicesNav } = instance
+    const { links, isSectionsNav } = instance
 
-    if (!isServicesNav) {
+    if (!isSectionsNav) {
       // Update navbar active state based on current page
       const currentPath = window.location.pathname
       const newActiveLink = Array.from(links).find(link => {
