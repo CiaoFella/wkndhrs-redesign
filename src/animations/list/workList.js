@@ -326,6 +326,26 @@ function init() {
     // Initialize everything
     initializeViewToggle()
     setupEventListeners()
+
+    // Reset background position after page transitions (Barba.js compatibility)
+    // Listen for when page transitions complete
+    if (window.barba) {
+      window.barba.hooks.after(() => {
+        // Small delay to ensure DOM is settled after transition
+        setTimeout(() => {
+          recalculateBackgroundPosition()
+        }, 150)
+      })
+    }
+
+    // Also listen for general page visibility changes
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        setTimeout(() => {
+          recalculateBackgroundPosition()
+        }, 100)
+      }
+    })
   })
 }
 

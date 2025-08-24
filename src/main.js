@@ -4,7 +4,7 @@ import menu from './animations/general/menu.js'
 import pageLoader from './animations/general/pageLoader.js'
 import { getCurrentPage, handleResponsiveElements, updateCurrentNavLink } from './utilities/helper.js'
 import createSplitTexts from './utilities/createSplitTexts.js'
-import lenis from './utilities/smoothScroll.js'
+import smoothScroll from './utilities/smoothScroll.js'
 import handlePageEnterAnimation from './animations/general/handlePageEnter.js'
 import { cursor, magneticCursor } from './utilities/customCursor/customCursor.js'
 import { isDesktop } from './utilities/variables.js'
@@ -95,22 +95,24 @@ document.addEventListener('onPageReady', event => {
   }
 })
 
-barba.hooks.beforeEnter(() => {
-  createSplitTexts.cleanup()
-})
-
-barba.hooks.afterEnter(data => {
+barba.hooks.leave(data => {
   cleanupCurrentModule()
   resetWebflow(data)
 })
 
-barba.hooks.after(data => {
+barba.hooks.beforeEnter(data => {
+  createSplitTexts.cleanup()
   const pageName = data.next.namespace
-  lenis.scrollTo(0, { duration: 0, immediate: true })
   createSplitTexts.init()
   updateCurrentNavLink()
   flipLink.updatePersistentNavigation() // Update persistent navigation state
   flipLink.init() // Reinitialize page-specific flip links
   loadPageModule(pageName)
+})
+
+barba.hooks.afterEnter(data => {})
+
+barba.hooks.after(data => {
   handleResponsiveElements()
+  smoothScroll.scrollTo(0, { immediate: true })
 })

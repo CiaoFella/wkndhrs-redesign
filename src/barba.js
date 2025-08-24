@@ -72,20 +72,33 @@ barba.init({
             gsap.set([currentContainer, nextContainer], {
               clipPath: 'unset',
             })
-            done()
-            getSmoothScroll().start()
           },
         })
 
         getSmoothScroll().stop()
 
+        // Calculate rotation based on container dimensions for consistent visual effect
+        const containerRect = currentContainer.getBoundingClientRect()
+        const targetDisplacement = -250 // pixels
+        const rotationRadians = Math.atan(targetDisplacement / containerRect.width)
+        const rotationDegrees = rotationRadians * (180 / Math.PI)
+
+        // Calculate fixed pixel increase for consistent scaling
+        const pixelIncrease = 500 // pixels to add to each dimension
+        const currentWidth = containerRect.width
+        const currentHeight = containerRect.height
+        const newWidth = currentWidth + pixelIncrease
+        const newHeight = currentHeight + pixelIncrease
+
         tl.to(
           currentContainer,
           {
             ease: 'power2.inOut',
-            yPercent: -12.5,
-            scale: 1.25,
-            rotateZ: -5,
+            y: '-50vh',
+            x: -pixelIncrease,
+            width: newWidth,
+            height: newHeight,
+            rotateZ: rotationDegrees,
             transformOrigin: 'top right',
           },
           0
@@ -112,6 +125,14 @@ barba.init({
               duration: 1.5,
             },
             '<-0.1'
+          )
+          .call(
+            () => {
+              done()
+              getSmoothScroll().start()
+            },
+            [],
+            '>'
           )
       },
       after(data) {
