@@ -90,6 +90,13 @@ barba.init({
         const newWidth = currentWidth + pixelIncrease
         const newHeight = currentHeight + pixelIncrease
 
+        // Calculate transform origin relative to viewport position
+        // This ensures rotation looks consistent regardless of scroll position
+        const containerTop = currentContainer.offsetTop
+        const viewportCenter = scrollTop + viewportHeight / 2
+        const relativeY = ((viewportCenter - containerTop) / containerHeight) * 100
+        const transformOriginY = Math.max(0, Math.min(100, relativeY))
+
         tl.to(
           currentContainer,
           {
@@ -99,7 +106,7 @@ barba.init({
             width: newWidth,
             height: newHeight,
             rotateZ: rotationDegrees,
-            transformOrigin: 'top right',
+            transformOrigin: `right ${transformOriginY}%`,
           },
           0
         )
