@@ -95,12 +95,14 @@ document.addEventListener('onPageReady', event => {
   }
 })
 
-barba.hooks.leave(data => {
-  cleanupCurrentModule()
+barba.hooks.afterLeave(data => {
   resetWebflow(data)
 })
 
+barba.hooks.afterLeave(data => {})
+
 barba.hooks.beforeEnter(data => {
+  cleanupCurrentModule() // Clean up the old module first
   createSplitTexts.cleanup()
   const pageName = data.next.namespace
   createSplitTexts.init()
@@ -109,8 +111,6 @@ barba.hooks.beforeEnter(data => {
   flipLink.init() // Reinitialize page-specific flip links
   loadPageModule(pageName)
 })
-
-barba.hooks.afterEnter(data => {})
 
 barba.hooks.after(data => {
   handleResponsiveElements()

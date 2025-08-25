@@ -137,6 +137,7 @@ barba.init({
             () => {
               done()
               getSmoothScroll().start()
+              ScrollTrigger.refresh()
             },
             [],
             '>'
