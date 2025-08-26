@@ -7,8 +7,6 @@ function init() {
   const contentElements = [...document.querySelectorAll('[data-anm-sticky-scroll=wrap]')]
   const totalContentElements = contentElements.length
 
-  console.log(contentElements)
-
   if (contentElements.length === 0) {
     return
   }

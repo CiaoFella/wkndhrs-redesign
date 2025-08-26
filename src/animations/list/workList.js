@@ -263,8 +263,6 @@ function init() {
     const switchView = newView => {
       if (newView === currentView) return
 
-      console.log(`Switching view from ${currentView} to ${newView}`)
-
       // Update current view
       currentView = newView
 

@@ -104,7 +104,6 @@ function init() {
       }
       // Determine navigation type and get appropriate links
       const isSectionsNav = wrap.getAttribute('data-anm-type') === 'sections'
-      console.log(isSectionsNav)
       const links = isSectionsNav
         ? wrap.querySelectorAll('[data-anm-flip-link="list"] a')
         : wrap.querySelectorAll('[data-anm-flip-link="list"] a')
@@ -113,8 +112,6 @@ function init() {
       if (!bg || links.length === 0) {
         return
       }
-
-      console.log(links)
 
       // Find initially active link based on navigation type
       let activeLink

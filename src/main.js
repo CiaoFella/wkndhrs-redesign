@@ -66,7 +66,6 @@ function loadPageModule(pageName) {
   import(/* webpackIgnore: true */ `${baseUrl}pages/${pageName}.js`)
     .then(module => {
       currentAnimationModule = module.default || {}
-      // console.log(`${baseUrl}pages/${pageName}.js`)
       if (typeof currentAnimationModule.init === 'function') {
         currentAnimationModule.init()
       } else {
@@ -90,7 +89,6 @@ flipLink.init() // Initialize flip links (including persistent navigation)
 loadPageModule(initialPageName)
 pageLoader.init(initialPageName)
 handleResponsiveElements()
-console.log(getCurrentPage())
 
 mm.add(isDesktop, () => {
   cursor.init()
@@ -130,5 +128,4 @@ barba.hooks.beforeEnter(data => {
 barba.hooks.after(data => {
   handleResponsiveElements()
   smoothScroll.scrollTo(0, { immediate: true })
-  console.log(getCurrentPage())
 })
