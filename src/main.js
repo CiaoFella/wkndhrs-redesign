@@ -9,6 +9,7 @@ import handlePageEnterAnimation from './animations/general/handlePageEnter.js'
 import { cursor, magneticCursor } from './utilities/customCursor/customCursor.js'
 import { isDesktop } from './utilities/variables.js'
 import flipLink from './animations/shared/flipLink.js'
+import priority from './animations/priority.js'
 
 gsap.registerPlugin(ScrollTrigger)
 menu.init()
@@ -52,6 +53,7 @@ function cleanupCurrentModule() {
   // Reset the current animation module reference
   currentAnimationModule = null
 }
+
 function getBaseUrl() {
   const script = document.querySelector('script[src*="main.js"]')
   const scriptSrc = script?.src || ''
@@ -79,11 +81,17 @@ function loadPageModule(pageName) {
 
 // Load the initial page module
 const initialPageName = document.querySelector('[data-barba="container"]').dataset.barbaNamespace
+
+// Initialize priority animations FIRST (navbar, etc.)
+priority.init()
+
 createSplitTexts.init()
 flipLink.init() // Initialize flip links (including persistent navigation)
 loadPageModule(initialPageName)
 pageLoader.init(initialPageName)
 handleResponsiveElements()
+console.log(getCurrentPage())
+
 mm.add(isDesktop, () => {
   cursor.init()
   magneticCursor()
@@ -99,7 +107,14 @@ barba.hooks.afterLeave(data => {
   resetWebflow(data)
 })
 
-barba.hooks.afterLeave(data => {})
+barba.hooks.leave(data => {
+  priority.cleanup()
+})
+
+barba.hooks.enter(data => {
+  // Reinitialize priority animations (navbar) after page transition
+  priority.init()
+})
 
 barba.hooks.beforeEnter(data => {
   cleanupCurrentModule() // Clean up the old module first
@@ -115,4 +130,5 @@ barba.hooks.beforeEnter(data => {
 barba.hooks.after(data => {
   handleResponsiveElements()
   smoothScroll.scrollTo(0, { immediate: true })
+  console.log(getCurrentPage())
 })

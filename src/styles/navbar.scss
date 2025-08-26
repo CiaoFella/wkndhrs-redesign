@@ -1,7 +1,9 @@
+@import '../styles/variables.scss';
+
 .navbar_wrap {
   transform: translateY(0);
-  transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1),
-    background-color 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), backdrop-filter 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: transform $duration-color-change $ease-power2-out,
+    background-color $duration-color-change $ease-power2-out, backdrop-filter $duration-color-change $ease-power2-out !important;
 }
 
 .navbar_wrap.is-hidden {
@@ -10,8 +12,12 @@
 
 .navbar_wrap {
   .navbar_contain {
-    transition: padding 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: padding $duration-color-change $ease-power2-out !important;
   }
+}
+
+[data-anm-navbar='bg'] {
+  transition: opacity $duration-color-change $ease-power2-out, background-color $duration-color-change $ease-power2-out !important;
 }
 
 .navbar_wrap.is-scrolled-past {
@@ -20,8 +26,29 @@
     padding-bottom: var(--_spacing---space--1);
   }
 
-  * {
-    backdrop-filter: none !important;
+  [data-anm-flip-link='bg'] {
+    background-color: var(--_theme---text) !important;
+  }
+
+  .w--current.is-active {
+    color: var(--_theme---background) !important;
+  }
+}
+
+.navbar_wrap.is-transparent-light {
+  color: var(--_theme---background) !important;
+
+  [data-anm-navbar='bg'] {
     background-color: transparent !important;
+    opacity: 0 !important;
+  }
+}
+
+.navbar_wrap.is-transparent-dark {
+  color: var(--_theme---text) !important;
+
+  [data-anm-navbar='bg'] {
+    background-color: transparent !important;
+    opacity: 0 !important;
   }
 }

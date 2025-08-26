@@ -4,6 +4,7 @@ import { proxy } from './utilities/pageReadyListener.js'
 import { getSmoothScroll } from './utilities/smoothScroll.js'
 import { isDesktop } from './utilities/variables.js'
 import { gsap, barba, ScrollTrigger } from './vendor.js'
+import navbar from './animations/general/navbar.js'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -28,6 +29,7 @@ barba.init({
         const done = this.async()
         proxy.pageReady = false
         closeMenu()
+        navbar.hideForTransition()
 
         const currentContainer = data.current.container
         const nextContainer = data.next.container
@@ -146,10 +148,13 @@ barba.init({
       after(data) {
         mm.add(isDesktop, () => {
           const customCursor = document.querySelector('.cb-cursor')
-          customCursor.remove()
+          if (customCursor) {
+            customCursor.remove()
+          }
           cursor.init()
           magneticCursor()
         })
+        navbar.showAfterTransition()
         proxy.pageReady = true
       },
     },

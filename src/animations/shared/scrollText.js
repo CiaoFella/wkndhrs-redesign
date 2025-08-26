@@ -54,6 +54,7 @@ function init() {
             autoSplit: true,
             reduceWhiteSpace: false,
             force3D: true,
+            mask: 'words',
           })
 
           textTarget.style.whiteSpace = originalWhiteSpace
@@ -63,28 +64,25 @@ function init() {
 
           mm.add(isTablet, () => {
             tl.from(richTextSplit.words, {
-              yPercent: 75,
+              yPercent: 100,
               duration: richTextDuration,
               delay: richTextDelay,
               stagger: {
-                amount: 1,
+                amount: 0.5,
               },
-              ease: 'power3.out',
-              opacity: 0,
+              ease: 'expo.out',
             })
           })
 
           mm.add(isDesktop, () => {
             tl.from(richTextSplit.words, {
-              yPercent: 75,
+              yPercent: 100,
               duration: richTextDuration,
               delay: richTextDelay,
               stagger: {
-                amount: 1,
+                amount: 0.5,
               },
-              ease: 'power4.out',
-              filter: 'blur(5px)',
-              opacity: 0,
+              ease: 'expo.out',
             })
           })
         })

@@ -20,6 +20,18 @@ mm.add(isDesktop, () => {
 })
 
 let locomotiveScroll = null
+let scrollData = {
+  scroll: 0,
+  limit: 0,
+  velocity: 0,
+  direction: 0,
+  progress: 0,
+}
+
+// Scroll callback function to track scroll data
+function onScroll({ scroll, limit, velocity, direction, progress }) {
+  scrollData = { scroll, limit, velocity, direction, progress }
+}
 
 export function createSmoothScroll(options = {}) {
   if (locomotiveScroll) {
@@ -29,6 +41,7 @@ export function createSmoothScroll(options = {}) {
     lerp,
     wheelMultiplier,
     touchMultiplier,
+    scrollCallback: onScroll,
     ...options,
   })
 
@@ -37,6 +50,10 @@ export function createSmoothScroll(options = {}) {
 
 export function getSmoothScroll() {
   return locomotiveScroll
+}
+
+export function getScrollData() {
+  return scrollData
 }
 
 // Create initial locomotiveScroll

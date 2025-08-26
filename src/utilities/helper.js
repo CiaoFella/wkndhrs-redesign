@@ -62,6 +62,27 @@ export function getCurrentPage() {
   return currentPage
 }
 
+export function getNextPage() {
+  // During page transitions, Barba.js creates a new container for the next page
+  // We need to find the container that's not the current active one
+  const containers = document.querySelectorAll('[data-barba="container"]')
+
+  if (containers.length === 1) {
+    // If there's only one container, we're either on initial load or transition is complete
+    return containers[0].dataset.barbaNamespace
+  } else if (containers.length === 2) {
+    // During transition, find the container that doesn't have 'is-animating' class removed yet
+    // or find the one that's being transitioned to
+    const currentContainer = document.querySelector('[data-barba="container"]:not(.is-animating)')
+    const nextContainer = Array.from(containers).find(container => container !== currentContainer)
+
+    return nextContainer ? nextContainer.dataset.barbaNamespace : containers[0].dataset.barbaNamespace
+  }
+
+  // Fallback to current page if we can't determine next page
+  return getCurrentPage()
+}
+
 let mm
 
 export function handleResponsiveElements() {

@@ -1,5 +1,4 @@
 import footer from './general/footer.js'
-import navbar from './general/navbar.js'
 import hero from './shared/hero.js'
 import scrollText from './shared/scrollText.js'
 import logoGrid from './shared/logoGrid.js'
@@ -9,7 +8,6 @@ import rollerNumber from './shared/rollerNumber.js'
 
 function init() {
   hero.init()
-  navbar.init()
   scrollText.init()
   logoGrid.init()
   scrollBg.init()
@@ -20,7 +18,6 @@ function init() {
 
 function cleanup() {
   hero.cleanup()
-  navbar.cleanup()
   scrollText.cleanup()
   logoGrid.cleanup()
   scrollBg.cleanup()

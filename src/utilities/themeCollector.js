@@ -43,6 +43,7 @@ function saveToStorage(themes) {
 export function getColorThemes() {
   window.colorThemes = {
     themes: {},
+    defaultTheme: 'light',
     getTheme(themeName = '', brandName = '') {
       if (!themeName) return this.getTheme(Object.keys(this.themes)[0], brandName)
       const theme = this.themes[themeName]
@@ -50,6 +51,44 @@ export function getColorThemes() {
       if (!theme.brands || Object.keys(theme.brands).length === 0) return theme
       if (!brandName) return theme.brands[Object.keys(theme.brands)[0]]
       return theme.brands[brandName] || {}
+    },
+    getDefaultTheme(brandName = '') {
+      return this.getTheme(this.defaultTheme, brandName)
+    },
+    resetBodyToDefault(brandName = '') {
+      // First, clear all existing theme properties
+      this.clearAllThemeProperties()
+
+      const defaultTheme = this.getDefaultTheme(brandName)
+      if (defaultTheme && Object.keys(defaultTheme).length > 0) {
+        // Apply CSS custom properties to body
+        Object.entries(defaultTheme).forEach(([property, value]) => {
+          document.body.style.setProperty(property, value)
+        })
+        return true
+      }
+      return false
+    },
+    clearAllThemeProperties() {
+      // Get all theme properties from all available themes
+      const allProperties = new Set()
+
+      Object.values(this.themes).forEach(theme => {
+        if (theme.brands && Object.keys(theme.brands).length > 0) {
+          // Theme has brands
+          Object.values(theme.brands).forEach(brandTheme => {
+            Object.keys(brandTheme).forEach(prop => allProperties.add(prop))
+          })
+        } else {
+          // Theme without brands
+          Object.keys(theme).forEach(prop => allProperties.add(prop))
+        }
+      })
+
+      // Remove all theme properties from body
+      allProperties.forEach(property => {
+        document.body.style.removeProperty(property)
+      })
     },
   }
 
