@@ -4,7 +4,7 @@ import menu from './animations/general/menu.js'
 import pageLoader from './animations/general/pageLoader.js'
 import { getCurrentPage, handleResponsiveElements, updateCurrentNavLink } from './utilities/helper.js'
 import createSplitTexts from './utilities/createSplitTexts.js'
-import smoothScroll from './utilities/smoothScroll.js'
+import { createSmoothScroll, getSmoothScroll } from './utilities/smoothScroll.js'
 import handlePageEnterAnimation from './animations/general/handlePageEnter.js'
 import { cursor, magneticCursor } from './utilities/customCursor/customCursor.js'
 import { isDesktop } from './utilities/variables.js'
@@ -123,10 +123,8 @@ barba.hooks.beforeEnter(data => {
   flipLink.updatePersistentNavigation() // Update persistent navigation state
   flipLink.init() // Reinitialize page-specific flip links
   loadPageModule(pageName)
-  // data.next.container.classList.remove('is-animating')
 })
 
 barba.hooks.after(data => {
   handleResponsiveElements()
-  smoothScroll.scrollTo(0, { immediate: true })
 })

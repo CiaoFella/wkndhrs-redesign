@@ -33,6 +33,10 @@
   .w--current.is-active {
     color: var(--_theme---background) !important;
   }
+
+  .u-blurry-bg-light {
+    background-color: transparent !important;
+  }
 }
 
 .navbar_wrap.is-transparent-light {

@@ -1,7 +1,7 @@
 import { cursor, magneticCursor } from './utilities/customCursor/customCursor.js'
 import { closeMenu } from './utilities/helper.js'
 import { proxy } from './utilities/pageReadyListener.js'
-import { getSmoothScroll } from './utilities/smoothScroll.js'
+import { createSmoothScroll, getSmoothScroll } from './utilities/smoothScroll.js'
 import { isDesktop } from './utilities/variables.js'
 import { gsap, barba, ScrollTrigger } from './vendor.js'
 import navbar from './animations/general/navbar.js'
@@ -29,7 +29,6 @@ barba.init({
         const done = this.async()
         proxy.pageReady = false
         closeMenu()
-        navbar.hideForTransition()
 
         const currentContainer = data.current.container
         const nextContainer = data.next.container
@@ -134,6 +133,7 @@ barba.init({
               done()
               getSmoothScroll().start()
               ScrollTrigger.refresh()
+              createSmoothScroll()
             },
             [],
             '>'
@@ -148,7 +148,6 @@ barba.init({
           cursor.init()
           magneticCursor()
         })
-        navbar.showAfterTransition()
         proxy.pageReady = true
       },
     },
