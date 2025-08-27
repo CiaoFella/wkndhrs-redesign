@@ -87,10 +87,6 @@ barba.init({
 
         // Calculate fixed pixel increase for consistent scaling
         const pixelIncrease = 500 // pixels to add to each dimension
-        const currentWidth = containerRect.width
-        const currentHeight = containerRect.height
-        const newWidth = currentWidth + pixelIncrease
-        const newHeight = currentHeight + pixelIncrease
 
         // Calculate transform origin relative to viewport position
         // This ensures rotation looks consistent regardless of scroll position
@@ -104,9 +100,7 @@ barba.init({
           {
             ease: 'power2.inOut',
             y: '-50vh',
-            x: -pixelIncrease,
-            width: newWidth,
-            height: newHeight,
+            x: '-10vw',
             rotateZ: rotationDegrees,
             transformOrigin: `right ${transformOriginY}%`,
           },

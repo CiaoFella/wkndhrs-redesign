@@ -38,6 +38,14 @@
 .navbar_wrap.is-transparent-light {
   color: var(--_theme---background) !important;
 
+  [data-anm-flip-link='bg'] {
+    background-color: var(--_theme---background) !important;
+  }
+
+  a.is-active {
+    color: var(--_theme---text) !important;
+  }
+
   [data-anm-navbar='bg'] {
     background-color: transparent !important;
     opacity: 0 !important;
@@ -46,6 +54,14 @@
 
 .navbar_wrap.is-transparent-dark {
   color: var(--_theme---text) !important;
+
+  a.is-active {
+    color: var(--_theme---background) !important;
+  }
+
+  [data-anm-flip-link='bg'] {
+    background-color: var(--_theme---text) !important;
+  }
 
   [data-anm-navbar='bg'] {
     background-color: transparent !important;

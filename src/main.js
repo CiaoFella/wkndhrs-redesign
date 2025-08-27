@@ -101,7 +101,8 @@ document.addEventListener('onPageReady', event => {
   }
 })
 
-barba.hooks.afterLeave(data => {
+barba.hooks.beforeLeave(data => {
+  data.next.container.classList.add('is-animating')
   resetWebflow(data)
 })
 
@@ -110,7 +111,6 @@ barba.hooks.leave(data => {
 })
 
 barba.hooks.enter(data => {
-  // Reinitialize priority animations (navbar) after page transition
   priority.init()
 })
 
@@ -123,6 +123,7 @@ barba.hooks.beforeEnter(data => {
   flipLink.updatePersistentNavigation() // Update persistent navigation state
   flipLink.init() // Reinitialize page-specific flip links
   loadPageModule(pageName)
+  // data.next.container.classList.remove('is-animating')
 })
 
 barba.hooks.after(data => {
