@@ -1,3 +1,4 @@
+import { getSmoothScroll } from '../../utilities/smoothScroll.js'
 import { gsap, Flip } from '../../vendor.js'
 
 let ctx
@@ -275,6 +276,8 @@ function init() {
 
       // Update view state
       updateViewState(newView, true)
+
+      getSmoothScroll().scrollTo(0, { duration: 1, easing: x => 1 - Math.pow(1 - x, 4) })
     }
 
     // Recalculate background position on resize
@@ -357,3 +360,4 @@ export default {
   init,
   cleanup,
 }
+

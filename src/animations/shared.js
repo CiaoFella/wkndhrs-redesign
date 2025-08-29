@@ -5,6 +5,7 @@ import logoGrid from './shared/logoGrid.js'
 import scrollBg from './shared/scrollBg.js'
 import stickyScroll from './shared/stickyScroll.js'
 import rollerNumber from './shared/rollerNumber.js'
+import rollingSlider from './shared/rollingSlider.js'
 
 function init() {
   hero.init()
@@ -13,6 +14,7 @@ function init() {
   scrollBg.init()
   stickyScroll.init()
   rollerNumber.init()
+  rollingSlider.init()
   footer.init()
 }
 
@@ -23,6 +25,7 @@ function cleanup() {
   scrollBg.cleanup()
   stickyScroll.cleanup()
   rollerNumber.cleanup()
+  rollingSlider.cleanup()
   footer.cleanup()
 }
 
