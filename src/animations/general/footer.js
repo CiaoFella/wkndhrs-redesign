@@ -1,5 +1,4 @@
-import { fullClipPath, topClipPath } from '../../utilities/variables.js'
-import { gsap, ScrollTrigger, SplitText } from '../../vendor.js'
+import { gsap, ScrollTrigger } from '../../vendor.js'
 
 let ctx
 
@@ -7,6 +6,11 @@ function init() {
   const section = document.querySelector('[data-anm-footer=wrap]')
 
   if (!section) return
+
+  if (section.querySelector('.is-contact')) {
+    setupCopyFunctionality()
+    return
+  }
 
   ctx = gsap.context(() => {
     const tl = gsap.timeline({ defaults: { duration: 1, ease: 'none' } })

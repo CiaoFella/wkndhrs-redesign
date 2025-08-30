@@ -2,9 +2,10 @@ import { cursor, magneticCursor } from './utilities/customCursor/customCursor.js
 import { closeMenu } from './utilities/helper.js'
 import { proxy } from './utilities/pageReadyListener.js'
 import { createSmoothScroll, getSmoothScroll } from './utilities/smoothScroll.js'
-import { isDesktop } from './utilities/variables.js'
+import { isDesktop, isMobile } from './utilities/variables.js'
 import { gsap, barba, ScrollTrigger } from './vendor.js'
 import navbar from './animations/general/navbar.js'
+import mobileNavigation from './animations/general/mobileNavigation.js'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -29,6 +30,7 @@ barba.init({
         const done = this.async()
         proxy.pageReady = false
         closeMenu()
+        mobileNavigation.closeMenu()
 
         const currentContainer = data.current.container
         const nextContainer = data.next.container
@@ -80,12 +82,16 @@ barba.init({
 
         // Calculate rotation based on container dimensions for consistent visual effect
         const containerRect = currentContainer.getBoundingClientRect()
-        const targetDisplacement = -250 // pixels
+        let targetDisplacement
+        mm.add(isDesktop, () => {
+          targetDisplacement = -250 // pixels
+        })
+        mm.add(isMobile, () => {
+          targetDisplacement = -50 // pixels
+        })
+
         const rotationRadians = Math.atan(targetDisplacement / containerRect.width)
         const rotationDegrees = rotationRadians * (180 / Math.PI)
-
-        // Calculate fixed pixel increase for consistent scaling
-        const pixelIncrease = 500 // pixels to add to each dimension
 
         // Calculate transform origin relative to viewport position
         // This ensures rotation looks consistent regardless of scroll position

@@ -47,12 +47,37 @@ export function unwrapSpanAndPreserveClasses(element) {
 }
 
 export function closeMenu() {
+  // Close old mobile menu (if it exists)
   const menuTrigger = document.querySelector('[data-menu-mobile=trigger]')
-
-  if (!menuTrigger) return
-
-  if (menuTrigger.classList.contains('is-active')) {
+  if (menuTrigger && menuTrigger.classList.contains('is-active')) {
     menuTrigger.click()
+  }
+
+  // Close new mobile navigation
+  const navigationStatusEl = document.querySelector('[data-navigation-status]')
+  if (navigationStatusEl && navigationStatusEl.getAttribute('data-navigation-status') === 'active') {
+    navigationStatusEl.setAttribute('data-navigation-status', 'not-active')
+    // Restart smooth scroll if it was stopped
+    import('../utilities/smoothScroll.js').then(({ getSmoothScroll }) => {
+      const smoothScroll = getSmoothScroll()
+      if (smoothScroll) {
+        smoothScroll.start()
+      }
+    })
+  }
+}
+
+export function closeMobileNavigation() {
+  const navigationStatusEl = document.querySelector('[data-navigation-status]')
+  if (navigationStatusEl && navigationStatusEl.getAttribute('data-navigation-status') === 'active') {
+    navigationStatusEl.setAttribute('data-navigation-status', 'not-active')
+    // Restart smooth scroll if it was stopped
+    import('../utilities/smoothScroll.js').then(({ getSmoothScroll }) => {
+      const smoothScroll = getSmoothScroll()
+      if (smoothScroll) {
+        smoothScroll.start()
+      }
+    })
   }
 }
 

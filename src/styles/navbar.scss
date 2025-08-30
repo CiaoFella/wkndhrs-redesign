@@ -26,6 +26,13 @@
     padding-bottom: var(--_spacing---space--1);
   }
 
+  @media (max-width: 768px) {
+    .navbar_contain {
+      padding-top: var(--_spacing---space--3);
+      padding-bottom: var(--_spacing---space--3);
+    }
+  }
+
   [data-anm-flip-link='bg'] {
     background-color: var(--_theme---text) !important;
   }
@@ -54,6 +61,10 @@
     background-color: transparent !important;
     opacity: 0 !important;
   }
+
+  .hamburger-nav__toggle-bar {
+    color: var(--_theme---background) !important;
+  }
 }
 
 .navbar_wrap.is-transparent-dark {
@@ -71,4 +82,98 @@
     background-color: transparent !important;
     opacity: 0 !important;
   }
+}
+
+/* Mobile Navigation - Scaling Hamburger Styles */
+
+/* Nav Dark BG */
+.navigation__dark-bg {
+  transition: all 0.7s cubic-bezier(0.5, 0.5, 0, 1);
+}
+
+.mobile_menu_wrap[data-navigation-status='active'] .navigation__dark-bg {
+  opacity: 0.33;
+  visibility: visible;
+}
+
+/* Nav Group BG  */
+.hamburger-nav__bg {
+  transition: all 0.7s cubic-bezier(0.5, 0.5, 0, 1);
+}
+
+.mobile_menu_wrap[data-navigation-status='active'] .hamburger-nav__bg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Nav Group  */
+.hamburger-nav__group {
+  transition: all 0.5s cubic-bezier(0.5, 0.5, 0, 1), transform 0.7s cubic-bezier(0.5, 0.5, 0, 1);
+  transform: scale(0.15) rotate(0.001deg);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.mobile_menu_wrap[data-navigation-status='active'] .hamburger-nav__group {
+  transform: scale(1) rotate(0.001deg);
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Active Link  */
+.hamburger-nav__a[aria-current] .hamburger-nav__p {
+  opacity: 0.33;
+}
+
+/* Active Indicator  */
+.hamburger-nav__dot {
+  transition: all 0.7s cubic-bezier(0.5, 0.5, 0, 1);
+  transform: scale(0) rotate(0.001deg);
+  opacity: 0.5;
+}
+
+.hamburger-nav__a[aria-current] .hamburger-nav__dot {
+  transform: scale(1) rotate(0.001deg);
+  opacity: 1;
+}
+
+.hamburger-nav:has(.hamburger-nav__a:hover) .hamburger-nav__dot {
+  transform: scale(0) rotate(0.001deg);
+}
+
+.hamburger-nav .hamburger-nav__a:hover .hamburger-nav__dot {
+  transform: scale(1) rotate(0.001deg);
+  opacity: 0.25;
+}
+
+/* Hamburger Button  */
+.hamburger-nav__toggle {
+  transition: transform 0.7s cubic-bezier(0.5, 0.5, 0, 1);
+  transform: translate(0em, 0em) rotate(0.001deg);
+}
+
+.hamburger-nav__toggle .hamburger-nav__toggle-bar {
+  transition: transform 0.7s cubic-bezier(0.5, 0.5, 0, 1);
+  transform: translateY(-0.15em) rotate(0.001deg);
+}
+
+.hamburger-nav__toggle:hover .hamburger-nav__toggle-bar {
+  transform: translateY(0.15em) rotate(0.001deg);
+}
+
+.mobile_menu_wrap[data-navigation-status='active'] .hamburger-nav__toggle .hamburger-nav__toggle-bar {
+  transform: translateY(0em) rotate(45deg);
+}
+
+.hamburger-nav__toggle .hamburger-nav__toggle-bar:nth-child(2) {
+  transition: transform 0.7s cubic-bezier(0.5, 0.5, 0, 1);
+  transform: translateY(0.15em) rotate(0.001deg);
+}
+
+.hamburger-nav__toggle:hover .hamburger-nav__toggle-bar:nth-child(2) {
+  transform: translateY(-0.15em) rotate(0.001deg);
+}
+
+.mobile_menu_wrap[data-navigation-status='active'] .hamburger-nav__toggle .hamburger-nav__toggle-bar:nth-child(2) {
+  transform: translateY(0em) rotate(-45deg);
 }

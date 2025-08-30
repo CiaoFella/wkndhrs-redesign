@@ -1,6 +1,7 @@
 import { gsap, ScrollTrigger } from './vendor.js'
 import barba from './barba.js'
 import menu from './animations/general/menu.js'
+import mobileNavigation from './animations/general/mobileNavigation.js'
 import pageLoader from './animations/general/pageLoader.js'
 import { getCurrentPage, handleResponsiveElements, updateCurrentNavLink } from './utilities/helper.js'
 import createSplitTexts from './utilities/createSplitTexts.js'
@@ -83,6 +84,7 @@ const initialPageName = document.querySelector('[data-barba="container"]').datas
 
 // Initialize priority animations FIRST (navbar, etc.)
 priority.init()
+mobileNavigation.init() // Initialize mobile navigation as persistent (like priority)
 
 createSplitTexts.init()
 flipLink.init() // Initialize flip links (including persistent navigation)

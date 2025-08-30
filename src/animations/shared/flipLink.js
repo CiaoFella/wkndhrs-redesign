@@ -4,18 +4,14 @@ let ctx
 let cleanupFunctions = []
 let persistentNavInstances = new Map() // Store persistent navigation instances
 
-// Function to set up scroll-based active state detection for services nav
 function setupScrollActiveDetection(wrap, links, onActiveLinkChange) {
   const updateActiveLink = activeLink => {
-    // Remove active classes from all links
     links.forEach(l => {
       l.classList.remove('is-active', 'w--current')
     })
 
-    // Add active classes to current link
     activeLink.classList.add('is-active', 'w--current')
 
-    // Update the active link reference and animate background
     const flipWrap = wrap.closest('[data-anm-flip-link="wrap"]') || wrap.closest('[data-anm-flip-list="wrap"]')
     if (flipWrap) {
       const bg = flipWrap.querySelector('[data-anm-flip-link="bg"]')
@@ -38,13 +34,11 @@ function setupScrollActiveDetection(wrap, links, onActiveLinkChange) {
       }
     }
 
-    // Notify parent about active link change
     if (onActiveLinkChange) {
       onActiveLinkChange(activeLink)
     }
   }
 
-  // Add a small delay to ensure other ScrollTriggers are set up first
   requestAnimationFrame(() => {
     links.forEach(link => {
       const href = link.getAttribute('href')
@@ -53,7 +47,6 @@ function setupScrollActiveDetection(wrap, links, onActiveLinkChange) {
         const targetId = href.substring(1)
         let targetSection = document.getElementById(targetId)
 
-        // If not found by ID, try looking for service list items
         if (!targetSection) {
           const serviceItems = document.querySelectorAll('[data-anm-service-list="item"]')
 
@@ -89,20 +82,18 @@ function init() {
     return
   }
 
-  // Reset cleanup functions array for page-specific instances only
   cleanupFunctions = []
 
   ctx = gsap.context(() => {
     flipWraps.forEach(wrap => {
-      // Check if this is a persistent navigation (outside barba container)
       const barbaContainer = document.querySelector('[data-barba="container"]')
       const isPersistent = !barbaContainer || !barbaContainer.contains(wrap)
 
-      // If persistent and already initialized, skip
+      const isMobileNav = wrap.closest('[data-anm-navbar-mobile="navigation"]')
+
       if (isPersistent && persistentNavInstances.has(wrap)) {
         return
       }
-      // Determine navigation type and get appropriate links
       const isSectionsNav = wrap.getAttribute('data-anm-type') === 'sections'
       const links = isSectionsNav
         ? wrap.querySelectorAll('[data-anm-flip-link="list"] a')
@@ -117,24 +108,20 @@ function init() {
       let activeLink
 
       if (isSectionsNav) {
-        // For services nav, look for w--current class or first link
         activeLink =
           wrap.querySelector('.services_list_nav_link.w--current') ||
           wrap.querySelector('.services_list_nav_link.is-active') ||
           links[0]
 
-        // Remove existing classes and set active
         links.forEach(link => {
           link.classList.remove('is-active', 'w--current')
         })
         activeLink.classList.add('is-active', 'w--current')
 
-        // Set up scroll-based active state detection for services nav
         setupScrollActiveDetection(wrap, links, newActiveLink => {
-          activeLink = newActiveLink // Update the activeLink reference
+          activeLink = newActiveLink
         })
       } else {
-        // Original navbar logic
         activeLink = wrap.querySelector('.navbar_menu_link.is-active')
 
         if (!activeLink) {
@@ -155,7 +142,6 @@ function init() {
         }
       }
 
-      // Set initial position of background to match active link
       const setInitialPosition = () => {
         const linkRect = activeLink.getBoundingClientRect()
         const listRect = wrap.querySelector('[data-anm-flip-link="list"]').getBoundingClientRect()
@@ -168,14 +154,113 @@ function init() {
         })
       }
 
-      // Set initial position
-      setInitialPosition()
+      if (isMobileNav) {
+        const mobileMenuWrap = isMobileNav.closest('[data-navigation-status]')
+        const isMenuActive = mobileMenuWrap && mobileMenuWrap.getAttribute('data-navigation-status') === 'active'
 
-      // Function to animate background to target link
+        if (isMenuActive) {
+          setInitialPosition()
+        } else {
+          const hamburgerGroup = isMobileNav.closest('.hamburger-nav__group')
+
+          if (!hamburgerGroup) {
+            return
+          }
+
+          const clone = hamburgerGroup.cloneNode(true)
+
+          clone.style.position = 'absolute'
+          clone.style.top = '-9999px'
+          clone.style.left = '-9999px'
+          clone.style.visibility = 'hidden'
+          clone.style.transform = 'scale(1) rotate(0.001deg)'
+          clone.style.opacity = '1'
+          clone.style.pointerEvents = 'none'
+          clone.style.transition = 'none'
+
+          document.body.appendChild(clone)
+
+          clone.offsetHeight
+          clone.offsetWidth
+
+          requestAnimationFrame(() => {
+            const cloneWrap = clone.querySelector('[data-anm-flip-link="wrap"]')
+            const cloneLinks = cloneWrap?.querySelectorAll('[data-anm-flip-link="list"] a')
+
+            if (!cloneWrap || !cloneLinks || cloneLinks.length === 0) {
+              document.body.removeChild(clone)
+              return
+            }
+
+            const cloneActiveLink =
+              Array.from(cloneLinks).find(
+                link => link.classList.contains('is-active') || link.classList.contains('w--current')
+              ) || cloneLinks[0]
+            const cloneList = cloneWrap.querySelector('[data-anm-flip-link="list"]')
+
+            if (cloneActiveLink && cloneList) {
+              const cloneLinkRect = cloneActiveLink.getBoundingClientRect()
+              const cloneListRect = cloneList.getBoundingClientRect()
+
+              gsap.set(bg, {
+                width: cloneLinkRect.width,
+                height: cloneLinkRect.height,
+                x: cloneLinkRect.left - cloneListRect.left,
+                y: cloneLinkRect.top - cloneListRect.top,
+              })
+            }
+
+            document.body.removeChild(clone)
+          })
+        }
+
+        if (mobileMenuWrap) {
+          const observer = new MutationObserver(mutations => {
+            mutations.forEach(mutation => {
+              if (mutation.type === 'attributes' && mutation.attributeName === 'data-navigation-status') {
+                const newStatus = mobileMenuWrap.getAttribute('data-navigation-status')
+                if (newStatus === 'active') {
+                  const hamburgerGroup = isMobileNav.closest('.hamburger-nav__group')
+                  if (hamburgerGroup) {
+                    const handleTransitionEnd = e => {
+                      if (e.target === hamburgerGroup && e.propertyName === 'transform') {
+                        setInitialPosition()
+                        hamburgerGroup.removeEventListener('transitionend', handleTransitionEnd)
+                      }
+                    }
+
+                    hamburgerGroup.addEventListener('transitionend', handleTransitionEnd)
+
+                    setTimeout(() => {
+                      setInitialPosition()
+                      hamburgerGroup.removeEventListener('transitionend', handleTransitionEnd)
+                    }, 1000)
+                  }
+                }
+              }
+            })
+          })
+          observer.observe(mobileMenuWrap, { attributes: true })
+
+          if (isPersistent) {
+            if (persistentNavInstances.has(wrap)) {
+              const instance = persistentNavInstances.get(wrap)
+              if (instance.observer) {
+                instance.observer.disconnect()
+              }
+              instance.observer = observer
+            }
+          } else {
+            cleanupFunctions.push(() => observer.disconnect())
+          }
+        }
+      } else {
+        setInitialPosition()
+      }
+
       const animateToLink = (targetLink, duration = 0.5) => {
         const state = Flip.getState(bg)
 
-        // Temporarily position bg to match target link
         const targetRect = targetLink.getBoundingClientRect()
         const listRect = wrap.querySelector('[data-anm-flip-link="list"]').getBoundingClientRect()
 
@@ -192,16 +277,13 @@ function init() {
         })
       }
 
-      // Handle hover interactions
       links.forEach(link => {
         link.addEventListener('mouseenter', () => {
-          // Get the current active link (may have changed due to scroll)
           const currentActiveLink = isSectionsNav
             ? wrap.querySelector('.services_list_nav_link.is-active')
             : wrap.querySelector('.navbar_menu_link.is-active')
 
           if (link !== currentActiveLink) {
-            // Remove active classes from current active link
             if (isSectionsNav) {
               if (currentActiveLink) {
                 currentActiveLink.classList.remove('is-active', 'w--current')
@@ -218,13 +300,11 @@ function init() {
         })
 
         link.addEventListener('mouseleave', () => {
-          // Get the current active link (may have changed due to scroll)
           const currentActiveLink = isSectionsNav
             ? wrap.querySelector('.services_list_nav_link.is-active')
             : wrap.querySelector('.navbar_menu_link.is-active')
 
           if (link === currentActiveLink && link !== activeLink) {
-            // Remove active classes from hovered link
             if (isSectionsNav) {
               link.classList.remove('is-active', 'w--current')
               activeLink.classList.add('is-active', 'w--current')
@@ -236,25 +316,19 @@ function init() {
           }
         })
 
-        // Handle click to set new active state (only for navbar, not services nav)
         if (!isSectionsNav) {
           link.addEventListener('click', e => {
-            // Remove is-active from all links
             links.forEach(l => l.classList.remove('is-active'))
 
-            // Add is-active to clicked link
             link.classList.add('is-active')
 
-            // Update activeLink reference
             activeLink = link
 
-            // Animate to new active link
             animateToLink(link, 0.6)
           })
         }
       })
 
-      // Handle window resize to recalculate positions
       let resizeTimeout
       const handleResize = () => {
         clearTimeout(resizeTimeout)
@@ -265,9 +339,7 @@ function init() {
 
       window.addEventListener('resize', handleResize)
 
-      // Store cleanup function
       if (isPersistent) {
-        // Store persistent instance data
         persistentNavInstances.set(wrap, {
           links,
           bg,
@@ -287,21 +359,17 @@ function init() {
 }
 
 function cleanup() {
-  // Run all stored cleanup functions (page-specific only)
   cleanupFunctions.forEach(fn => fn())
   cleanupFunctions = []
 
-  // Revert GSAP context
   ctx && ctx.revert()
 }
 
-// Update active states for persistent navigation (called on page change)
 function updatePersistentNavigation() {
   persistentNavInstances.forEach((instance, wrap) => {
     const { links, isSectionsNav } = instance
 
     if (!isSectionsNav) {
-      // Update navbar active state based on current page
       const currentPath = window.location.pathname
       const newActiveLink = Array.from(links).find(link => {
         const linkPath = new URL(link.href, window.location.origin).pathname
@@ -309,15 +377,11 @@ function updatePersistentNavigation() {
       })
 
       if (newActiveLink) {
-        // Remove active from all links
         links.forEach(link => link.classList.remove('is-active'))
-        // Add active to current page link
         newActiveLink.classList.add('is-active')
 
-        // Update stored active link reference
         instance.activeLink = newActiveLink
 
-        // Animate background to new position
         const { bg } = instance
         const linkRect = newActiveLink.getBoundingClientRect()
         const listRect = wrap.querySelector('[data-anm-flip-link="list"]').getBoundingClientRect()
@@ -339,12 +403,9 @@ function updatePersistentNavigation() {
   })
 }
 
-// Complete cleanup (including persistent navigation)
 function fullCleanup() {
-  // Cleanup page-specific instances
   cleanup()
 
-  // Cleanup persistent instances
   persistentNavInstances.forEach(instance => {
     instance.cleanupFn()
   })
