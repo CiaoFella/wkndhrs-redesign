@@ -124,10 +124,9 @@ function init() {
                 if (smoothScroll) {
                   smoothScroll.start()
                 }
-              }, 200) // 650ms to ensure flip animation completes (600ms + buffer)
+              }, 200)
             })
           } else {
-            // No flip animation or already active link, close immediately
             navigationStatusEl.setAttribute('data-navigation-status', 'not-active')
             const smoothScroll = getSmoothScroll()
             if (smoothScroll) {

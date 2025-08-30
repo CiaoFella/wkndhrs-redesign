@@ -100,7 +100,14 @@ function init() {
         : wrap.querySelectorAll('[data-anm-flip-link="list"] a')
       const bg = wrap.querySelector('[data-anm-flip-link="bg"]')
 
-      if (!bg || links.length === 0) {
+      // Skip flip background for mobile nav on tablet and below, but keep active class functionality
+      const skipFlipAnimation = isMobileNav && window.innerWidth <= 768
+
+      if (!skipFlipAnimation && (!bg || links.length === 0)) {
+        return
+      }
+
+      if (skipFlipAnimation && links.length === 0) {
         return
       }
 
@@ -143,6 +150,8 @@ function init() {
       }
 
       const setInitialPosition = () => {
+        if (skipFlipAnimation) return
+
         const linkRect = activeLink.getBoundingClientRect()
         const listRect = wrap.querySelector('[data-anm-flip-link="list"]').getBoundingClientRect()
 
@@ -154,111 +163,11 @@ function init() {
         })
       }
 
-      if (isMobileNav) {
-        const mobileMenuWrap = isMobileNav.closest('[data-navigation-status]')
-        const isMenuActive = mobileMenuWrap && mobileMenuWrap.getAttribute('data-navigation-status') === 'active'
-
-        if (isMenuActive) {
-          setInitialPosition()
-        } else {
-          const hamburgerGroup = isMobileNav.closest('.hamburger-nav__group')
-
-          if (!hamburgerGroup) {
-            return
-          }
-
-          const clone = hamburgerGroup.cloneNode(true)
-
-          clone.style.position = 'absolute'
-          clone.style.top = '-9999px'
-          clone.style.left = '-9999px'
-          clone.style.visibility = 'hidden'
-          clone.style.transform = 'scale(1) rotate(0.001deg)'
-          clone.style.opacity = '1'
-          clone.style.pointerEvents = 'none'
-          clone.style.transition = 'none'
-
-          document.body.appendChild(clone)
-
-          clone.offsetHeight
-          clone.offsetWidth
-
-          requestAnimationFrame(() => {
-            const cloneWrap = clone.querySelector('[data-anm-flip-link="wrap"]')
-            const cloneLinks = cloneWrap?.querySelectorAll('[data-anm-flip-link="list"] a')
-
-            if (!cloneWrap || !cloneLinks || cloneLinks.length === 0) {
-              document.body.removeChild(clone)
-              return
-            }
-
-            const cloneActiveLink =
-              Array.from(cloneLinks).find(
-                link => link.classList.contains('is-active') || link.classList.contains('w--current')
-              ) || cloneLinks[0]
-            const cloneList = cloneWrap.querySelector('[data-anm-flip-link="list"]')
-
-            if (cloneActiveLink && cloneList) {
-              const cloneLinkRect = cloneActiveLink.getBoundingClientRect()
-              const cloneListRect = cloneList.getBoundingClientRect()
-
-              gsap.set(bg, {
-                width: cloneLinkRect.width,
-                height: cloneLinkRect.height,
-                x: cloneLinkRect.left - cloneListRect.left,
-                y: cloneLinkRect.top - cloneListRect.top,
-              })
-            }
-
-            document.body.removeChild(clone)
-          })
-        }
-
-        if (mobileMenuWrap) {
-          const observer = new MutationObserver(mutations => {
-            mutations.forEach(mutation => {
-              if (mutation.type === 'attributes' && mutation.attributeName === 'data-navigation-status') {
-                const newStatus = mobileMenuWrap.getAttribute('data-navigation-status')
-                if (newStatus === 'active') {
-                  const hamburgerGroup = isMobileNav.closest('.hamburger-nav__group')
-                  if (hamburgerGroup) {
-                    const handleTransitionEnd = e => {
-                      if (e.target === hamburgerGroup && e.propertyName === 'transform') {
-                        setInitialPosition()
-                        hamburgerGroup.removeEventListener('transitionend', handleTransitionEnd)
-                      }
-                    }
-
-                    hamburgerGroup.addEventListener('transitionend', handleTransitionEnd)
-
-                    setTimeout(() => {
-                      setInitialPosition()
-                      hamburgerGroup.removeEventListener('transitionend', handleTransitionEnd)
-                    }, 1000)
-                  }
-                }
-              }
-            })
-          })
-          observer.observe(mobileMenuWrap, { attributes: true })
-
-          if (isPersistent) {
-            if (persistentNavInstances.has(wrap)) {
-              const instance = persistentNavInstances.get(wrap)
-              if (instance.observer) {
-                instance.observer.disconnect()
-              }
-              instance.observer = observer
-            }
-          } else {
-            cleanupFunctions.push(() => observer.disconnect())
-          }
-        }
-      } else {
-        setInitialPosition()
-      }
+      setInitialPosition()
 
       const animateToLink = (targetLink, duration = 0.5) => {
+        if (skipFlipAnimation) return
+
         const state = Flip.getState(bg)
 
         const targetRect = targetLink.getBoundingClientRect()

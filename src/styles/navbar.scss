@@ -1,9 +1,10 @@
-@import '../styles/variables.scss';
+@use './variables.scss';
 
 .navbar_wrap {
   transform: translateY(0);
-  transition: transform $duration-color-change $ease-power2-out,
-    background-color $duration-color-change $ease-power2-out, backdrop-filter $duration-color-change $ease-power2-out !important;
+  transition: transform variables.$duration-color-change variables.$ease-power2-out,
+    background-color variables.$duration-color-change variables.$ease-power2-out,
+    backdrop-filter variables.$duration-color-change variables.$ease-power2-out !important;
 }
 
 .navbar_wrap.is-hidden {
@@ -12,25 +13,19 @@
 
 .navbar_wrap {
   .navbar_contain {
-    transition: padding $duration-color-change $ease-power2-out !important;
+    transition: padding variables.$duration-color-change variables.$ease-power2-out !important;
   }
 }
 
 [data-anm-navbar='bg'] {
-  transition: opacity $duration-color-change $ease-power2-out, background-color $duration-color-change $ease-power2-out !important;
+  transition: opacity variables.$duration-color-change variables.$ease-power2-out,
+    background-color variables.$duration-color-change variables.$ease-power2-out !important;
 }
 
 .navbar_wrap.is-scrolled-past {
   .navbar_contain {
     padding-top: var(--_spacing---space--1);
     padding-bottom: var(--_spacing---space--1);
-  }
-
-  @media (max-width: 768px) {
-    .navbar_contain {
-      padding-top: var(--_spacing---space--3);
-      padding-bottom: var(--_spacing---space--3);
-    }
   }
 
   [data-anm-flip-link='bg'] {
@@ -44,6 +39,17 @@
   .u-blurry-bg-light {
     background-color: transparent !important;
   }
+
+  @media (max-width: variables.$breakpoint-tablet) {
+    .navbar_contain {
+      padding-top: var(--_spacing---space--3);
+      padding-bottom: var(--_spacing---space--3);
+    }
+
+    .w--current.is-active {
+      background-color: var(--_theme---text) !important;
+    }
+  }
 }
 
 .navbar_wrap.is-transparent-light {
@@ -55,6 +61,7 @@
 
   a.is-active {
     color: var(--_theme---text) !important;
+    background-color: var(--_theme---background) !important;
   }
 
   [data-anm-navbar='bg'] {
@@ -72,6 +79,7 @@
 
   a.is-active {
     color: var(--_theme---background) !important;
+    background-color: var(--_theme---text) !important;
   }
 
   [data-anm-flip-link='bg'] {
@@ -88,7 +96,7 @@
 
 /* Nav Dark BG */
 .navigation__dark-bg {
-  transition: all 0.7s cubic-bezier(0.5, 0.5, 0, 1);
+  transition: all variables.$duration-color-change variables.$ease-power2-out;
 }
 
 .mobile_menu_wrap[data-navigation-status='active'] .navigation__dark-bg {
@@ -98,7 +106,7 @@
 
 /* Nav Group BG  */
 .hamburger-nav__bg {
-  transition: all 0.7s cubic-bezier(0.5, 0.5, 0, 1);
+  transition: all variables.$duration-color-change variables.$ease-power2-out;
 }
 
 .mobile_menu_wrap[data-navigation-status='active'] .hamburger-nav__bg {
@@ -108,7 +116,8 @@
 
 /* Nav Group  */
 .hamburger-nav__group {
-  transition: all 0.5s cubic-bezier(0.5, 0.5, 0, 1), transform 0.7s cubic-bezier(0.5, 0.5, 0, 1);
+  transition: all variables.$duration-color-change variables.$ease-power2-out,
+    transform variables.$duration-color-change variables.$ease-power2-out;
   transform: scale(0.15) rotate(0.001deg);
   opacity: 0;
   visibility: hidden;
@@ -127,7 +136,7 @@
 
 /* Active Indicator  */
 .hamburger-nav__dot {
-  transition: all 0.7s cubic-bezier(0.5, 0.5, 0, 1);
+  transition: all variables.$duration-color-change variables.$ease-power2-out;
   transform: scale(0) rotate(0.001deg);
   opacity: 0.5;
 }
@@ -148,12 +157,12 @@
 
 /* Hamburger Button  */
 .hamburger-nav__toggle {
-  transition: transform 0.7s cubic-bezier(0.5, 0.5, 0, 1);
+  transition: transform variables.$duration-color-change variables.$ease-power2-out;
   transform: translate(0em, 0em) rotate(0.001deg);
 }
 
 .hamburger-nav__toggle .hamburger-nav__toggle-bar {
-  transition: transform 0.7s cubic-bezier(0.5, 0.5, 0, 1);
+  transition: transform variables.$duration-color-change variables.$ease-power2-out;
   transform: translateY(-0.15em) rotate(0.001deg);
 }
 
@@ -166,7 +175,7 @@
 }
 
 .hamburger-nav__toggle .hamburger-nav__toggle-bar:nth-child(2) {
-  transition: transform 0.7s cubic-bezier(0.5, 0.5, 0, 1);
+  transition: transform variables.$duration-color-change variables.$ease-power2-out;
   transform: translateY(0.15em) rotate(0.001deg);
 }
 
