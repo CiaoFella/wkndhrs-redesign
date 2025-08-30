@@ -2,62 +2,48 @@ import { gsap, ScrollTrigger } from '../vendor.js'
 import { isDesktop, isLandscape, isMobile, isTablet } from './variables.js'
 
 export function unwrapSpanAndPreserveClasses(element) {
-  // Select all span elements inside the given element
   const spans = element.querySelectorAll('span')
 
-  // Iterate over each span
   spans.forEach(span => {
-    // Get the class list of the span
     const spanClasses = span.className
 
-    // Create a document fragment to hold the new elements
     const fragment = document.createDocumentFragment()
 
-    // Iterate over child nodes to preserve <br> elements
     span.childNodes.forEach(node => {
       if (node.nodeType === Node.TEXT_NODE) {
-        // Split the text content into words
         const words = node.textContent.split(/\s+/)
 
         words.forEach((word, index) => {
-          // Create a new span for each word
           const newSpan = document.createElement('span')
           newSpan.textContent = word
 
-          // Add the original span's classes to the new span
           if (spanClasses) {
             newSpan.className = spanClasses
           }
 
-          // Append the new span and a space after the word (if it's not the last word)
           fragment.appendChild(newSpan)
           if (index < words.length - 1) {
             fragment.appendChild(document.createTextNode(' '))
           }
         })
       } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') {
-        // Preserve <br> elements
         fragment.appendChild(node.cloneNode())
       }
     })
 
-    // Replace the original span with the new fragment
     span.replaceWith(fragment)
   })
 }
 
 export function closeMenu() {
-  // Close old mobile menu (if it exists)
   const menuTrigger = document.querySelector('[data-menu-mobile=trigger]')
   if (menuTrigger && menuTrigger.classList.contains('is-active')) {
     menuTrigger.click()
   }
 
-  // Close new mobile navigation
   const navigationStatusEl = document.querySelector('[data-navigation-status]')
   if (navigationStatusEl && navigationStatusEl.getAttribute('data-navigation-status') === 'active') {
     navigationStatusEl.setAttribute('data-navigation-status', 'not-active')
-    // Restart smooth scroll if it was stopped
     import('../utilities/smoothScroll.js').then(({ getSmoothScroll }) => {
       const smoothScroll = getSmoothScroll()
       if (smoothScroll) {
@@ -71,7 +57,6 @@ export function closeMobileNavigation() {
   const navigationStatusEl = document.querySelector('[data-navigation-status]')
   if (navigationStatusEl && navigationStatusEl.getAttribute('data-navigation-status') === 'active') {
     navigationStatusEl.setAttribute('data-navigation-status', 'not-active')
-    // Restart smooth scroll if it was stopped
     import('../utilities/smoothScroll.js').then(({ getSmoothScroll }) => {
       const smoothScroll = getSmoothScroll()
       if (smoothScroll) {
@@ -88,23 +73,17 @@ export function getCurrentPage() {
 }
 
 export function getNextPage() {
-  // During page transitions, Barba.js creates a new container for the next page
-  // We need to find the container that's not the current active one
   const containers = document.querySelectorAll('[data-barba="container"]')
 
   if (containers.length === 1) {
-    // If there's only one container, we're either on initial load or transition is complete
     return containers[0].dataset.barbaNamespace
   } else if (containers.length === 2) {
-    // During transition, find the container that doesn't have 'is-animating' class removed yet
-    // or find the one that's being transitioned to
     const currentContainer = document.querySelector('[data-barba="container"]:not(.is-animating)')
     const nextContainer = Array.from(containers).find(container => container !== currentContainer)
 
     return nextContainer ? nextContainer.dataset.barbaNamespace : containers[0].dataset.barbaNamespace
   }
 
-  // Fallback to current page if we can't determine next page
   return getCurrentPage()
 }
 
@@ -137,7 +116,7 @@ export function handleResponsiveElements() {
 
   function handleElementRemoval(breakpoint) {
     document.querySelectorAll('[data-remove]').forEach(el => {
-      const removeAt = el.getAttribute('data-remove') // e.g., "tablet", "landscape", "mobile"
+      const removeAt = el.getAttribute('data-remove')
       const parent = el.parentNode
       const nextSibling = el.nextElementSibling
 
@@ -158,7 +137,7 @@ export function updateCurrentNavLink() {
     const href = link.getAttribute('href')
 
     if (href === currentPath || href === currentPath + '/') {
-      link.classList.add('w--current') // Webflow uses 'w--current' for the 'current' class
+      link.classList.add('w--current')
     } else {
       link.classList.remove('w--current')
     }
@@ -167,7 +146,6 @@ export function updateCurrentNavLink() {
 
 /**
  * Creates a throttled scroll handler using requestAnimationFrame
- * Following MDN best practices for RAF usage
  * @param {Function} callback - Function to call on scroll
  * @param {Object} options - Configuration options
  * @param {boolean} options.passive - Use passive event listener (default: true)
@@ -181,11 +159,9 @@ export function createRAFScrollHandler(callback, options = {}) {
   let lastTimestamp = 0
 
   const handleScroll = timestamp => {
-    // Use timestamp parameter for frame-rate independent calculations
     const deltaTime = timestamp - lastTimestamp
     lastTimestamp = timestamp
 
-    // Call the user callback with timestamp and deltaTime
     callback(timestamp, deltaTime)
 
     isScheduled = false
@@ -215,7 +191,7 @@ export function createRAFScrollHandler(callback, options = {}) {
   return {
     start,
     stop,
-    // Expose current state for debugging
+
     get isActive() {
       return rafId !== null
     },
@@ -227,7 +203,7 @@ export function createRAFScrollHandler(callback, options = {}) {
 
 /**
  * Creates a general RAF-based animation loop
- * @param {Function} callback - Animation callback receiving (timestamp, deltaTime, progress)
+ * @param {Function} callback - Animation callback receiving (timestamp, deltaTime, progress)x
  * @param {Object} options - Animation options
  * @param {number} options.duration - Animation duration in ms (optional)
  * @param {boolean} options.autoStart - Start immediately (default: true)
@@ -251,10 +227,8 @@ export function createRAFAnimation(callback, options = {}) {
 
     let progress = duration ? Math.min(elapsed / duration, 1) : elapsed / 1000
 
-    // Call user callback with timestamp, deltaTime, and progress
     const shouldContinue = callback(timestamp, deltaTime, progress)
 
-    // Continue animation if duration not reached or callback returns true
     if ((duration && progress < 1) || (!duration && shouldContinue !== false)) {
       rafId = requestAnimationFrame(animate)
     } else {

@@ -100,7 +100,6 @@ function init() {
         : wrap.querySelectorAll('[data-anm-flip-link="list"] a')
       const bg = wrap.querySelector('[data-anm-flip-link="bg"]')
 
-      // Skip flip background for mobile nav on tablet and below, but keep active class functionality
       const skipFlipAnimation = isMobileNav && window.innerWidth <= 768
 
       if (!skipFlipAnimation && (!bg || links.length === 0)) {
@@ -111,7 +110,6 @@ function init() {
         return
       }
 
-      // Find initially active link based on navigation type
       let activeLink
 
       if (isSectionsNav) {
